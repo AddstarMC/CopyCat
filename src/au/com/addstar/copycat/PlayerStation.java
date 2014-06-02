@@ -7,6 +7,8 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class PlayerStation
 {
@@ -22,7 +24,7 @@ public class PlayerStation
 	public void setLocationAndFacing(Location location, BlockFace facing)
 	{
 		Validate.isTrue(facing == BlockFace.NORTH || facing == BlockFace.EAST || facing == BlockFace.SOUTH || facing == BlockFace.WEST);
-		mLocation = location;
+		mLocation = new Location(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
 		mFacing = facing;
 	}
 	
@@ -43,12 +45,33 @@ public class PlayerStation
 			for(int z = 0; z < mBoard.getSubjectSize(); ++z)
 			{
 				// Subject
-				Block block = world.getBlockAt(corner.getBlockX() + x * mFacing.getModX(), corner.getBlockY() + z, corner.getBlockZ() + x * mFacing.getModZ());
+				Block block = world.getBlockAt(corner.getBlockX() + x * right.getModX(), corner.getBlockY() + z, corner.getBlockZ() + x * right.getModZ());
 				block.setType(Material.AIR);
 				
 				// Play area
-				block = world.getBlockAt(cornerPlay.getBlockX() + x * right.getModX() + z + mFacing.getModX(), cornerPlay.getBlockY(), cornerPlay.getBlockZ() + x * right.getModZ() + z + mFacing.getModZ());
+				block = world.getBlockAt(cornerPlay.getBlockX() + x * right.getModX() + z * mFacing.getModX(), cornerPlay.getBlockY(), cornerPlay.getBlockZ() + x * right.getModZ() + z * mFacing.getModZ());
 				block.setType(Material.AIR);
+			}
+		}
+	}
+	
+	public void displayLocations(Player player)
+	{
+		Location corner = getSubjectLocation();
+		Location cornerPlay = getPlayLocation();
+		BlockFace right = getRight();
+		
+		int size = mBoard.getSubjectSize();
+		
+		for(int x = 0; x < size; ++x)
+		{
+			for(int z = 0; z < size; ++z)
+			{
+				// Subject
+				player.sendBlockChange(corner.clone().add(x * right.getModX(), z, x * right.getModZ()), Material.WOOL, (byte)14);
+				
+				// Play area
+				player.sendBlockChange(cornerPlay.clone().add(x * right.getModX() + z * mFacing.getModX(), 0, x * right.getModZ() + z * mFacing.getModZ()), Material.WOOL, (byte)4);
 			}
 		}
 	}
@@ -69,8 +92,8 @@ public class PlayerStation
 	{
 		BlockFace right = getRight();
 		double size = mBoard.getSubjectSize() / 2d;
-		double x = (2 + size) * right.getModX();
-		double z = (2 + size) * right.getModZ();
+		double x = (1 + size) * right.getModX();
+		double z = (1 + size) * right.getModZ();
 		
 		return mLocation.clone().add(x, 1, z);
 	}
@@ -79,8 +102,8 @@ public class PlayerStation
 	{
 		BlockFace right = getRight();
 		double size = mBoard.getSubjectSize();
-		double x = 2;
-		double z = 5 + size;
+		double x = 1;
+		double z = 4 + size;
 		
 		return mLocation.clone().add(x * right.getModX() + z * mFacing.getModX(), 3, x * right.getModZ() + z * mFacing.getModZ());
 	}
@@ -88,9 +111,9 @@ public class PlayerStation
 	public Location getPlayLocation()
 	{
 		BlockFace right = getRight();
-		double x = 2;
+		double x = 1;
 		
-		return mLocation.clone().add(x * right.getModX() + x * mFacing.getModX(), 3, x * right.getModZ() + x * mFacing.getModZ());
+		return mLocation.clone().add(x * right.getModX() + x * mFacing.getModX(), 0, x * right.getModZ() + x * mFacing.getModZ());
 	}
 	
 	public boolean isInPlayArea(Location location)
@@ -116,7 +139,7 @@ public class PlayerStation
 	{
 		if(isValid())
 		{
-			section.set("Location", mLocation);
+			section.set("Location", mLocation.toVector());
 			section.set("Facing", mFacing.name());
 		}
 	}
@@ -125,7 +148,7 @@ public class PlayerStation
 	{
 		if(section.contains("Location") && section.contains("Facing"))
 		{
-			mLocation = (Location)section.get("Location");
+			mLocation = ((Vector)section.get("Location")).toLocation(mBoard.getWorld());
 			mFacing = BlockFace.valueOf(section.getString("Facing"));
 		}
 		else

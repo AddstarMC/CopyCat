@@ -67,6 +67,7 @@ public class CopyCatPlugin extends JavaPlugin
 				try
 				{
 					GameBoard board = new GameBoard(file);
+					board.setWorld(world);
 					boards.put(name, board);
 					mMinigameToBoard.put(board.getMinigameId(), board);
 				}
@@ -98,6 +99,7 @@ public class CopyCatPlugin extends JavaPlugin
 	
 	public boolean registerGame(GameBoard board, String name, World world)
 	{
+		board.setWorld(world);
 		name = name.toLowerCase();
 		
 		HashMap<String, GameBoard> boards = mBoards.get(world);
@@ -113,6 +115,29 @@ public class CopyCatPlugin extends JavaPlugin
 		boards.put(name, board);
 		mMinigameToBoard.put(board.getMinigameId(), board);
 		
+		File folder = new File(getDataFolder(), "boards");
+		if(!folder.exists())
+			folder.mkdirs();
+		
+		try
+		{
+			board.write(new File(folder, world.getName().toLowerCase() + "-" + name + ".yml"));
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean saveBoard(String name, World world)
+	{
+		GameBoard board = getBoard(name, world);
+		if(board == null)
+			return false;
+
 		File folder = new File(getDataFolder(), "boards");
 		if(!folder.exists())
 			folder.mkdirs();

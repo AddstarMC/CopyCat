@@ -3,6 +3,7 @@ package au.com.addstar.copycat;
 import java.io.File;
 import java.io.IOException;
 
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,6 +16,7 @@ public class GameBoard
 	private PlayerStation[] mStations;
 	private int mSize;
 	private String mMinigameId;
+	private World mWorld;
 	
 	public GameBoard(int players, int size, String minigame)
 	{
@@ -32,6 +34,16 @@ public class GameBoard
 		read(file);
 	}
 	
+	public void setWorld(World world)
+	{
+		mWorld = world;
+	}
+	
+	public World getWorld()
+	{
+		return mWorld;
+	}
+	
 	public int getSubjectSize()
 	{
 		return mSize;
@@ -46,9 +58,20 @@ public class GameBoard
 	{
 		return mMinigameId;
 	}
+	
 	public Minigame getMinigame()
 	{
 		return Minigames.plugin.mdata.getMinigame(mMinigameId);
+	}
+	
+	public int getStationCount()
+	{
+		return mStations.length;
+	}
+	
+	public PlayerStation getStation(int number)
+	{
+		return mStations[number];
 	}
 	
 	public void write(File file) throws IOException
