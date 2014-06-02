@@ -1,0 +1,13 @@
+name: CopyCat
+version: ${pom.version}
+
+main: au.com.addstar.copycat.CopyCatPlugin
+
+depend: [Minigames]
+
+permissions:
+  copycat.command.create:
+    default: OP
+
+commands:
+  copycat:
