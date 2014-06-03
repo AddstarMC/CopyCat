@@ -66,16 +66,10 @@ public class CopyCatLogic extends ScoreTypeBase
 		if(board != null)
 		{
 			PlayerStation station = board.getStation(player);
-			if(!station.isInPlayArea(event.getBlock().getLocation()))
-			{
+			if(!station.isInPlayArea(event.getBlock().getLocation()) || !station.getCanModify())
 				event.setCancelled(true);
-				return;
-			}
-			
-			if(board.canModify(player))
-				board.onPlaceBlock(player);
 			else
-				event.setCancelled(true);
+				board.onPlaceBlock(player);
 		}
 	}
 	
@@ -87,13 +81,7 @@ public class CopyCatLogic extends ScoreTypeBase
 		if(board != null)
 		{
 			PlayerStation station = board.getStation(player);
-			if(!station.isInPlayArea(event.getBlock().getLocation()))
-			{
-				event.setCancelled(true);
-				return;
-			}
-			
-			if(!board.canModify(player))
+			if(!station.isInPlayArea(event.getBlock().getLocation()) || !station.getCanModify())
 				event.setCancelled(true);
 		}
 	}

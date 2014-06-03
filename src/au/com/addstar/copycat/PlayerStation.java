@@ -19,6 +19,7 @@ public class PlayerStation
 	private Location mLocation;
 	
 	private MinigamePlayer mPlayer;
+	private boolean mCanModify;
 	
 	public PlayerStation(GameBoard board)
 	{
@@ -50,6 +51,16 @@ public class PlayerStation
 	public BlockFace getFacing()
 	{
 		return mFacing;
+	}
+	
+	public void setCanModify(boolean canModify)
+	{
+		mCanModify = canModify;
+	}
+	
+	public boolean getCanModify()
+	{
+		return mCanModify;
 	}
 	
 	public void clearStation()
