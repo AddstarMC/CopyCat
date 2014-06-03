@@ -215,6 +215,7 @@ public class CopyCatPlugin extends JavaPlugin
 		minigame.setObjective("Copy the shown pattern");
 		minigame.setTeleportOnStart(false);
 		minigame.setType(MinigameType.FREE_FOR_ALL);
+		minigame.setLives(3);
 	}
 	
 	public SubjectStorage getSubjectStorage()

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -31,7 +30,7 @@ public class GameBoard
 	private int mSize;
 	private String mMinigameId;
 	private World mWorld;
-	private int mSubjectDrawTime = 30;
+	private int mSubjectDrawTime = 60;
 	private boolean mAllowSubjectDraw = true;
 	private int mWaitTime = 10;
 	private boolean mSaveSubjects = true;
@@ -167,10 +166,13 @@ public class GameBoard
 		}
 	}
 	
-	public void broadcast(String message)
+	public void broadcast(String message, MinigamePlayer except)
 	{
 		for(MinigamePlayer player : getMinigame().getPlayers())
-			player.sendMessage(message, null);
+		{
+			if(except != player)
+				player.sendMessage(message, null);
+		}
 	}
 	
 	private void startSubjectDraw()
@@ -179,7 +181,7 @@ public class GameBoard
 		
 		mState = GameState.SubjectDraw;
 		mSubjectDrawer = minigame.getPlayers().get(mNextToDraw);
-		broadcast(mSubjectDrawer.getDisplayName() + " is drawing the pattern.");
+		broadcast(mSubjectDrawer.getDisplayName() + " is drawing the pattern.", mSubjectDrawer);
 		mSubjectDrawer.sendMessage("Draw the pattern in your play area. You have " + Util.getTimeRemainString(mSubjectDrawTime * 1000) + ". If you do not fill every block, a random pattern will be used.", "win");
 		minigame.getDefaultPlayerLoadout().equiptLoadout(mSubjectDrawer);
 		
@@ -194,7 +196,6 @@ public class GameBoard
 	{
 		SubjectStorage storage = CopyCatPlugin.instance.getSubjectStorage();
 		mSubject = storage.getRandomSubject(mSize);
-		// TODO: Select subject
 	}
 	
 	private void waitFor(long time, GameState next)
@@ -237,14 +238,27 @@ public class GameBoard
 			station.clearStation();
 		
 		// Begin the game
-		mTask = Bukkit.getScheduler().runTaskTimer(CopyCatPlugin.instance, new GameTimer(), 20, 20);
+		mTask = Bukkit.getScheduler().runTaskTimer(CopyCatPlugin.instance, new GameTimer(), 5, 5);
 		doLogic();
 	}
 	
 	public void onPlayerLeave(MinigamePlayer player)
 	{
-		// TODO: Recalc next to draw
-		endGame(); // TODO: This is temp
+		Minigame minigame = getMinigame();
+		PlayerStation station = getStation(player);
+		station.clearStation();
+		
+		if(mNextToDraw >= minigame.getPlayers().size())
+			mNextToDraw = 0;
+		
+		if(mState == GameState.SubjectDraw && player == mSubjectDrawer)
+			startSubjectDraw();
+		
+		if(minigame.getPlayers().size() <= 2)
+		{
+			System.out.println("Game end");
+			endGame();
+		}
 	}
 	
 	private void handleWaitLogic()
@@ -258,27 +272,27 @@ public class GameBoard
 		}
 		else
 		{
-			if(left > 30000)
+			if(left >= 30000)
 			{
-				if(System.currentTimeMillis() - mLastNotify > 15000)
+				if(System.currentTimeMillis() - mLastNotify >= 15000)
 				{
-					broadcast("Round starts in " + Util.getTimeRemainString(left));
+					broadcast("Round starts in " + Util.getTimeRemainString(left), null);
 					mLastNotify = System.currentTimeMillis();
 				}
 			}
-			else if(left > 10000)
+			else if(left >= 10000)
 			{
-				if(System.currentTimeMillis() - mLastNotify > 5000)
+				if(System.currentTimeMillis() - mLastNotify >= 5000)
 				{
-					broadcast("Round starts in " + Util.getTimeRemainString(left));
+					broadcast("Round starts in " + Util.getTimeRemainString(left), null);
 					mLastNotify = System.currentTimeMillis();
 				}
 			}
 			else
 			{
-				if(System.currentTimeMillis() - mLastNotify > 1000)
+				if(System.currentTimeMillis() - mLastNotify >= 1000)
 				{
-					broadcast("Round starts in " + Util.getTimeRemainString(left));
+					broadcast("Round starts in " + Util.getTimeRemainString(left), null);
 					mLastNotify = System.currentTimeMillis();
 				}
 			}
@@ -294,12 +308,12 @@ public class GameBoard
 			Subject subject = Subject.from(station.getPlayLocation(), station.getFacing(), mSize);
 			if(subject == null)
 			{
-				broadcast("Pattern was not completed in time. Selecting a random pattern.");
+				broadcast("Pattern was not completed in time. Selecting a random pattern.", null);
 				selectSubject();
 			}
 			else
 			{
-				broadcast("Using pattern created by " + mSubjectDrawer.getDisplayName());
+				broadcast("Using pattern created by " + mSubjectDrawer.getDisplayName(), null);
 				mSubject = subject;
 				
 				if(mSaveSubjects)
@@ -313,29 +327,29 @@ public class GameBoard
 		}
 		else
 		{
-			if(left > 30000)
+			if(left >= 30000)
 			{
-				if(System.currentTimeMillis() - mLastNotify > 15000)
+				if(System.currentTimeMillis() - mLastNotify >= 15000)
 				{
-					broadcast("Round starts in " + Util.getTimeRemainString(left));
+					broadcast("Round starts in " + Util.getTimeRemainString(left), mSubjectDrawer);
 					mSubjectDrawer.sendMessage("You have " + Util.getTimeRemainString(left) + " to complete your drawing", "win");
 					mLastNotify = System.currentTimeMillis();
 				}
 			}
-			else if(left > 10000)
+			else if(left >= 10000)
 			{
-				if(System.currentTimeMillis() - mLastNotify > 5000)
+				if(System.currentTimeMillis() - mLastNotify >= 5000)
 				{
-					broadcast("Round starts in " + Util.getTimeRemainString(left));
+					broadcast("Round starts in " + Util.getTimeRemainString(left), mSubjectDrawer);
 					mSubjectDrawer.sendMessage("You have " + Util.getTimeRemainString(left) + " to complete your drawing", "win");
 					mLastNotify = System.currentTimeMillis();
 				}
 			}
 			else
 			{
-				if(System.currentTimeMillis() - mLastNotify > 1000)
+				if(System.currentTimeMillis() - mLastNotify >= 1000)
 				{
-					broadcast("Round starts in " + Util.getTimeRemainString(left));
+					broadcast("Round starts in " + Util.getTimeRemainString(left), mSubjectDrawer);
 					mSubjectDrawer.sendMessage("You have " + Util.getTimeRemainString(left) + " to complete your drawing", "win");
 					mLastNotify = System.currentTimeMillis();
 				}
@@ -348,7 +362,7 @@ public class GameBoard
 		if(mStateEnd == 0)
 		{
 			Minigame minigame = getMinigame();
-			broadcast(ChatColor.GOLD + "Begin!");
+			broadcast("Start copying", null);
 			mWaiting.clear();
 			mWaiting.addAll(minigame.getPlayers());
 			
@@ -373,36 +387,38 @@ public class GameBoard
 		
 		Minigame minigame = getMinigame();
 		MinigamePlayer player = mWaiting.iterator().next();
+		player.addDeath();
+
+		player.sendMessage("You did not finish in time. You have lost a life", "error");
+		broadcast(player.getDisplayName() + " lost a life.", player);
 		
-		// More players to eliminate.
-		if(minigame.getPlayers().size() > 2)
+		if(player.getDeaths() >= minigame.getLives())
 		{
-			broadcast(player.getDisplayName() + " was eliminated. Only " + (minigame.getPlayers().size() - 1) + " players remain.");
 			player.sendMessage("You were eliminated from the game.", "error");
 			
 			Minigames.plugin.pdata.quitMinigame(player, true);
-			
+			if(minigame.getPlayers().size() > 1)
+				broadcast(player.getDisplayName() + " was eliminated. Only " + (minigame.getPlayers().size() - 1) + " players remain.", player);
+			else
+				broadcast(player.getDisplayName() + " was eliminated.", player);
+		}
+		
+		// More players to eliminate.
+		if(minigame.getPlayers().size() > 1)
+		{
 			if(mAllowSubjectDraw)
 				startSubjectDraw();
 			else
 			{
 				waitFor(mWaitTime / 2 * 1000, GameState.Main);
 				selectSubject();
-				broadcast("Selecting random pattern. Round starts in " + Util.getTimeRemainString(mWaitTime * 1000));
+				broadcast("Selecting random pattern. Round starts in " + Util.getTimeRemainString(mWaitTime * 1000), null);
 			}
 		}
 		// End of game
 		else
 		{
-			MinigamePlayer winner = null;
-			for(MinigamePlayer p : minigame.getPlayers())
-			{
-				if(p != player)
-				{
-					winner = p;
-					break;
-				}
-			}
+			MinigamePlayer winner = minigame.getPlayers().get(0);
 			
 			Minigames.plugin.pdata.endMinigame(winner);
 			mState = GameState.Initial;
@@ -433,7 +449,7 @@ public class GameBoard
 				PlayerStation station = getStation(player);
 				if(mSubject.matches(station.getPlayLocation(), station.getFacing()))
 				{
-					broadcast(player.getDisplayName() + " has completed the pattern!");
+					broadcast(player.getDisplayName() + " has completed the pattern!", null);
 					mWaiting.remove(player);
 					
 					if(mWaiting.size() <= 1)
@@ -455,7 +471,7 @@ public class GameBoard
 			{
 				waitFor(mWaitTime / 2 * 1000, GameState.Main);
 				selectSubject();
-				broadcast("Selecting random pattern. Round starts in " + Util.getTimeRemainString(mWaitTime * 1000));
+				broadcast("Selecting random pattern. Round starts in " + Util.getTimeRemainString(mWaitTime * 1000), null);
 			}
 			break;
 		}
