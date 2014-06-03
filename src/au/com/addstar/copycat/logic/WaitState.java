@@ -22,7 +22,7 @@ public class WaitState extends TimerState
 	protected void onNotifyTimeLeft( long remaining, StateEngine<GameBoard> engine, GameBoard game )
 	{
 		if(remaining == 0)
-			engine.setState(new MainState());
+			engine.setState(game.getMainState());
 		else
 			game.broadcast("Round starts in " + Util.getTimeRemainString(remaining), null);
 	}

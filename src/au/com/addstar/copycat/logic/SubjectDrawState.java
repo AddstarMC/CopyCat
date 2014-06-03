@@ -59,7 +59,7 @@ public class SubjectDrawState extends TimerState
 			game.getDrawer().sendMessage("You have " + Util.getTimeRemainString(remaining) + " to complete your drawing", null);
 		}
 		else
-			engine.setState(new MainState());
+			engine.setState(game.getMainState());
 	}
 	
 	@Override

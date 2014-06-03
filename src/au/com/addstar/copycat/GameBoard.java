@@ -8,7 +8,11 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import au.com.addstar.copycat.logic.EliminationMainState;
 import au.com.addstar.copycat.logic.PreRoundState;
+import au.com.addstar.copycat.logic.ScoringMainState;
+import au.com.addstar.copycat.logic.State;
 import au.com.addstar.copycat.logic.StateEngine;
 
 import com.pauldavdesign.mineauz.minigames.MinigamePlayer;
@@ -17,6 +21,12 @@ import com.pauldavdesign.mineauz.minigames.minigame.Minigame;
 
 public class GameBoard
 {
+	public enum GameMode
+	{
+		Elimination,
+		Score
+	}
+	
 	private PlayerStation[] mStations;
 	private int mSize;
 	private String mMinigameId;
@@ -25,6 +35,7 @@ public class GameBoard
 	private boolean mAllowSubjectDraw = true;
 	private int mWaitTime = 10;
 	private boolean mSaveSubjects = true;
+	private GameMode mMode = GameMode.Score;
 	
 	// In game vars
 	
@@ -111,6 +122,16 @@ public class GameBoard
 	public boolean getAllowSubjectDrawing()
 	{
 		return mAllowSubjectDraw;
+	}
+	
+	public GameMode getGameMode()
+	{
+		return mMode;
+	}
+	
+	public void setGameMode(GameMode mode)
+	{
+		mMode = mode;
 	}
 	
 	public boolean isValid()
@@ -268,6 +289,18 @@ public class GameBoard
 	public void endGame()
 	{
 		mEngine.end();
+	}
+	
+	public State<GameBoard> getMainState()
+	{
+		switch(mMode)
+		{
+		default:
+		case Elimination:
+			return new EliminationMainState();
+		case Score:
+			return new ScoringMainState();
+		}
 	}
 }
 
