@@ -3,26 +3,35 @@ package au.com.addstar.copycat;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import au.com.addstar.copycat.commands.CopyCatCommand;
 
 import com.google.common.collect.HashBiMap;
 import com.pauldavdesign.mineauz.minigames.Minigames;
+import com.pauldavdesign.mineauz.minigames.PlayerLoadout;
+import com.pauldavdesign.mineauz.minigames.gametypes.MinigameType;
+import com.pauldavdesign.mineauz.minigames.minigame.Minigame;
 import com.pauldavdesign.mineauz.minigames.scoring.ScoreType;
 
 public class CopyCatPlugin extends JavaPlugin
 {
 	private HashMap<World, HashMap<String, GameBoard>> mBoards = new HashMap<World, HashMap<String, GameBoard>>();
 	private HashBiMap<String, GameBoard> mMinigameToBoard = HashBiMap.create();
+	private SubjectStorage mStorage;
 	
 	public static CopyCatPlugin instance;
 	public static final Pattern validNamePattern = Pattern.compile("^[a-zA-Z0-9_]+$");
+	public static final Random rand = new Random();
 	
 	@Override
 	public void onEnable()
@@ -31,6 +40,8 @@ public class CopyCatPlugin extends JavaPlugin
 		
 		if(!getDataFolder().exists())
 			getDataFolder().mkdirs();
+		
+		mStorage = new SubjectStorage(new File(getDataFolder(), "subjects"));
 		
 		new CopyCatCommand().registerAs(getCommand("copycat"));
 		
@@ -66,8 +77,7 @@ public class CopyCatPlugin extends JavaPlugin
 				
 				try
 				{
-					GameBoard board = new GameBoard(file);
-					board.setWorld(world);
+					GameBoard board = new GameBoard(file, world);
 					boards.put(name, board);
 					mMinigameToBoard.put(board.getMinigameId(), board);
 				}
@@ -97,16 +107,15 @@ public class CopyCatPlugin extends JavaPlugin
 		boards.clear();
 	}
 	
-	public boolean registerGame(GameBoard board, String name, World world)
+	public boolean registerGame(GameBoard board, String name)
 	{
-		board.setWorld(world);
 		name = name.toLowerCase();
 		
-		HashMap<String, GameBoard> boards = mBoards.get(world);
+		HashMap<String, GameBoard> boards = mBoards.get(board.getWorld());
 		if(boards == null)
 		{
 			boards = new HashMap<String, GameBoard>();
-			mBoards.put(world, boards);
+			mBoards.put(board.getWorld(), boards);
 		}
 		
 		if(boards.containsKey(name))
@@ -121,7 +130,7 @@ public class CopyCatPlugin extends JavaPlugin
 		
 		try
 		{
-			board.write(new File(folder, world.getName().toLowerCase() + "-" + name + ".yml"));
+			board.write(new File(folder, board.getWorld().getName().toLowerCase() + "-" + name + ".yml"));
 		}
 		catch(IOException e)
 		{
@@ -162,5 +171,54 @@ public class CopyCatPlugin extends JavaPlugin
 			return null;
 		
 		return boards.get(name.toLowerCase());
+	}
+	
+	public GameBoard getBoardByGame(String minigame)
+	{
+		return mMinigameToBoard.get(minigame);
+	}
+	
+	public static void applyDefaultsForGame(GameBoard board)
+	{
+		Minigame game = board.getMinigame();
+		if(game == null)
+			return;
+		
+		applyDefaults(game);
+		game.setMaxPlayers(board.getStationCount());
+		
+		game.getStartLocations().clear();
+		game.addStartLocation(board.getStation(0).getSpawnLocation());
+		game.saveMinigame();
+	}
+	
+	public static void applyDefaults(Minigame minigame)
+	{
+		minigame.setScoreType("copycat");
+		minigame.setBlocksdrop(true);
+		minigame.setCanBlockBreak(true);
+		minigame.setCanBlockPlace(true);
+		PlayerLoadout loadout = minigame.getDefaultPlayerLoadout();
+		loadout.clearLoadout();
+		loadout.addItem(new ItemStack(Material.DIAMOND_PICKAXE), 0);
+		loadout.addItem(new ItemStack(Material.STAINED_CLAY, 64, (short)0), 1);
+		loadout.addItem(new ItemStack(Material.STAINED_CLAY, 64, (short)4), 2);
+		loadout.addItem(new ItemStack(Material.STAINED_CLAY, 64, (short)3), 3);
+		loadout.addItem(new ItemStack(Material.STAINED_CLAY, 64, (short)9), 4);
+		loadout.addItem(new ItemStack(Material.STAINED_CLAY, 64, (short)8), 5);
+		loadout.addItem(new ItemStack(Material.STAINED_CLAY, 64, (short)13), 6);
+		loadout.addItem(new ItemStack(Material.STAINED_CLAY, 64, (short)14), 7);
+		loadout.addItem(new ItemStack(Material.STAINED_CLAY, 64, (short)15), 8);
+		
+		minigame.setDefaultGamemode(GameMode.SURVIVAL);
+		minigame.setGametypeName("Copy Cat");
+		minigame.setObjective("Copy the shown pattern");
+		minigame.setTeleportOnStart(false);
+		minigame.setType(MinigameType.FREE_FOR_ALL);
+	}
+	
+	public SubjectStorage getSubjectStorage()
+	{
+		return mStorage;
 	}
 }

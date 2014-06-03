@@ -10,11 +10,15 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import com.pauldavdesign.mineauz.minigames.MinigamePlayer;
+
 public class PlayerStation
 {
 	private GameBoard mBoard;
 	private BlockFace mFacing;
 	private Location mLocation;
+	
+	private MinigamePlayer mPlayer;
 	
 	public PlayerStation(GameBoard board)
 	{
@@ -31,6 +35,21 @@ public class PlayerStation
 	public boolean isValid()
 	{
 		return (mLocation != null && mFacing != null);
+	}
+	
+	public void setPlayer(MinigamePlayer player)
+	{
+		mPlayer = player;
+	}
+	
+	public MinigamePlayer getPlayer()
+	{
+		return mPlayer;
+	}
+	
+	public BlockFace getFacing()
+	{
+		return mFacing;
 	}
 	
 	public void clearStation()
@@ -95,7 +114,10 @@ public class PlayerStation
 		double x = (1 + size) * right.getModX();
 		double z = (1 + size) * right.getModZ();
 		
-		return mLocation.clone().add(x, 1, z);
+		Location loc = mLocation.clone().add(x, 1, z);
+		
+		loc.setYaw(Util.getYaw(mFacing));
+		return loc;
 	}
 	
 	public Location getSubjectLocation()
@@ -127,10 +149,10 @@ public class PlayerStation
 		if(location.getY() != mLocation.getY())
 			return false;
 		
-		int minX = Math.min(mLocation.getBlockX() + 2 * right.getModX() + 2 * mFacing.getModX(), mLocation.getBlockX() + (2 + size-1) * right.getModX() + (2 + size-1) * mFacing.getModX());
-		int maxX = Math.max(mLocation.getBlockX() + 2 * right.getModX() + 2 * mFacing.getModX(), mLocation.getBlockX() + (2 + size-1) * right.getModX() + (2 + size-1) * mFacing.getModX());
-		int minZ = Math.min(mLocation.getBlockZ() + 2 * right.getModZ() + 2 * mFacing.getModZ(), mLocation.getBlockZ() + (2 + size-1) * right.getModZ() + (2 + size-1) * mFacing.getModZ());
-		int maxZ = Math.max(mLocation.getBlockZ() + 2 * right.getModZ() + 2 * mFacing.getModZ(), mLocation.getBlockZ() + (2 + size-1) * right.getModZ() + (2 + size-1) * mFacing.getModZ());
+		int minX = Math.min(mLocation.getBlockX() + 1 * right.getModX() + 1 * mFacing.getModX(), mLocation.getBlockX() + (1 + size-1) * right.getModX() + (1 + size-1) * mFacing.getModX());
+		int maxX = Math.max(mLocation.getBlockX() + 1 * right.getModX() + 1 * mFacing.getModX(), mLocation.getBlockX() + (1 + size-1) * right.getModX() + (1 + size-1) * mFacing.getModX());
+		int minZ = Math.min(mLocation.getBlockZ() + 1 * right.getModZ() + 1 * mFacing.getModZ(), mLocation.getBlockZ() + (1 + size-1) * right.getModZ() + (1 + size-1) * mFacing.getModZ());
+		int maxZ = Math.max(mLocation.getBlockZ() + 1 * right.getModZ() + 1 * mFacing.getModZ(), mLocation.getBlockZ() + (1 + size-1) * right.getModZ() + (1 + size-1) * mFacing.getModZ());
 		
 		return (location.getBlockX() >= minX && location.getBlockX() <= maxX && location.getBlockZ() >= minZ && location.getBlockZ() <= maxZ);
 	}

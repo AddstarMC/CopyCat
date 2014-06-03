@@ -27,6 +27,11 @@ public class Subject
 		mData = data;
 	}
 	
+	public int getSize()
+	{
+		return mSize;
+	}
+	
 	public void placeAt(Location location, BlockFace facing)
 	{
 		Validate.isTrue(facing == BlockFace.NORTH || facing == BlockFace.EAST || facing == BlockFace.SOUTH || facing == BlockFace.WEST);
@@ -52,6 +57,8 @@ public class Subject
 	{
 		Validate.isTrue(facing == BlockFace.NORTH || facing == BlockFace.EAST || facing == BlockFace.SOUTH || facing == BlockFace.WEST);
 		
+		BlockFace right = Util.rotateRight(facing);
+		
 		int bx = location.getBlockX();
 		int by = location.getBlockY();
 		int bz = location.getBlockZ();
@@ -60,9 +67,9 @@ public class Subject
 		{
 			for(int y = 0; y < mSize; ++y)
 			{
-				Block block = location.getWorld().getBlockAt(bx + facing.getModX() * x + facing.getModZ() * y, by, bz + facing.getModX() * x + facing.getModZ() * y);
+				Block block = location.getWorld().getBlockAt(bx + right.getModX() * x + facing.getModX() * y, by, bz + right.getModZ() * x + facing.getModZ() * y);
 				MaterialData data = mData[x + (y * mSize)];
-				if(block.getType() != data.getItemType() || block.getData() != block.getData())
+				if(block.getType() != data.getItemType() || block.getData() != data.getData())
 					return false;
 			}
 		}
@@ -89,6 +96,8 @@ public class Subject
 	{
 		Validate.isTrue(facing == BlockFace.NORTH || facing == BlockFace.EAST || facing == BlockFace.SOUTH || facing == BlockFace.WEST);
 		
+		BlockFace right = Util.rotateRight(facing);
+		
 		int bx = location.getBlockX();
 		int by = location.getBlockY();
 		int bz = location.getBlockZ();
@@ -98,7 +107,9 @@ public class Subject
 		{
 			for(int y = 0; y < size; ++y)
 			{
-				Block block = location.getWorld().getBlockAt(bx + facing.getModX() * x, by + y, bz + facing.getModZ() * x);
+				Block block = location.getWorld().getBlockAt(bx + x * right.getModX() + y * facing.getModX(), by, bz + x * right.getModZ() + y * facing.getModZ());
+				if(block.isEmpty())
+					return null;
 				data[x + (y * size)] = block.getType().getNewData(block.getData());
 			}
 		}

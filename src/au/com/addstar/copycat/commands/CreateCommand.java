@@ -95,9 +95,11 @@ public class CreateCommand implements ICommand
 			throw new BadArgumentException(3, "Expected board size. 8 is the normal size.");
 		}
 		
-		GameBoard board = new GameBoard(players, size, minigame);
-		if(CopyCatPlugin.instance.registerGame(board, name, world))
+		GameBoard board = new GameBoard(players, size, minigame, world);
+		if(CopyCatPlugin.instance.registerGame(board, name))
 		{
+			CopyCatPlugin.applyDefaults(board.getMinigame());
+			
 			int dimX = size + 4;
 			int dimZ = size + 6;
 			int dimY = size + 5;
