@@ -60,6 +60,8 @@ public class Util
 	
 	public static String getTimeRemainString(long time)
 	{
+		time = Math.round(time / 1000f) * 1000;
+		
 		StringBuilder text = new StringBuilder();
 		if(time > TimeUnit.MINUTES.toMillis(1))
 		{
