@@ -8,6 +8,8 @@ depend: [Minigames]
 permissions:
   copycat.command.create:
     default: OP
-
+  copycat.command.set:
+    default: OP
+    
 commands:
   copycat:

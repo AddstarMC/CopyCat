@@ -3,12 +3,23 @@ package au.com.addstar.copycat;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import au.com.addstar.copycat.flags.BooleanFlag;
+import au.com.addstar.copycat.flags.EnumFlag;
+import au.com.addstar.copycat.flags.Flag;
+import au.com.addstar.copycat.flags.FlagIO;
+import au.com.addstar.copycat.flags.Flaggable;
+import au.com.addstar.copycat.flags.IntegerFlag;
+import au.com.addstar.copycat.flags.StringFlag;
+import au.com.addstar.copycat.flags.TimeFlag;
 import au.com.addstar.copycat.logic.EliminationMainState;
 import au.com.addstar.copycat.logic.PreRoundState;
 import au.com.addstar.copycat.logic.ScoringMainState;
@@ -19,7 +30,7 @@ import com.pauldavdesign.mineauz.minigames.MinigamePlayer;
 import com.pauldavdesign.mineauz.minigames.Minigames;
 import com.pauldavdesign.mineauz.minigames.minigame.Minigame;
 
-public class GameBoard
+public class GameBoard implements Flaggable
 {
 	public enum GameMode
 	{
@@ -29,13 +40,16 @@ public class GameBoard
 	
 	private PlayerStation[] mStations;
 	private int mSize;
-	private String mMinigameId;
 	private World mWorld;
-	private int mSubjectDrawTime = 60;
-	private boolean mAllowSubjectDraw = true;
-	private int mWaitTime = 10;
-	private boolean mSaveSubjects = true;
-	private GameMode mMode = GameMode.Score;
+	
+	private StringFlag mMinigameId;
+	private IntegerFlag mSubjectDrawTime;
+	private BooleanFlag mAllowSubjectDraw;
+	private IntegerFlag mWaitTime;
+	private BooleanFlag mSaveSubjects;
+	private EnumFlag<GameMode> mMode;
+	
+	private HashMap<String, Flag<?>> mFlags;
 	
 	// In game vars
 	
@@ -45,20 +59,52 @@ public class GameBoard
 	private MinigamePlayer mSubjectDrawer;
 	private StateEngine<GameBoard> mEngine = new StateEngine<GameBoard>();
 	
+	private GameBoard()
+	{
+		mFlags = new HashMap<String, Flag<?>>();
+		
+		mMinigameId = new StringFlag();
+		mFlags.put("minigame", mMinigameId);
+		
+		mSubjectDrawTime = new IntegerFlag();
+		mSubjectDrawTime.setValue(60);
+		mFlags.put("pattern-draw-time", mSubjectDrawTime);
+		
+		mAllowSubjectDraw = new BooleanFlag();
+		mAllowSubjectDraw.setValue(true);
+		mFlags.put("pattern-draw-enabled", mAllowSubjectDraw);
+		
+		mWaitTime = new IntegerFlag();
+		mWaitTime.setValue(10);
+		mFlags.put("wait-time", mWaitTime);
+		
+		mSaveSubjects = new BooleanFlag();
+		mSaveSubjects.setValue(true);
+		mFlags.put("pattern-save", mSaveSubjects);
+		
+		mMode = new EnumFlag<GameMode>(GameMode.class);
+		mMode.setValue(GameMode.Elimination);
+		mFlags.put("mode", mMode);
+	}
+	
 	public GameBoard(int players, int size, String minigame, World world)
 	{
+		this();
+		
 		mStations = new PlayerStation[players];
 		
 		for(int i = 0; i < players; ++i)
 			mStations[i] = new PlayerStation(this);
 		
 		mSize = size;
-		mMinigameId = minigame;
+		mMinigameId.setValue(minigame);
 		mWorld = world;
 	}
 	
 	public GameBoard(File file, World world) throws IOException, InvalidConfigurationException
 	{
+		this();
+		
 		mWorld = world;
 		read(file);
 	}
@@ -106,32 +152,27 @@ public class GameBoard
 	
 	public long getSubjectDrawTime()
 	{
-		return mSubjectDrawTime * 1000;
+		return mSubjectDrawTime.getValue() * 1000;
 	}
 	
 	public long getWaitTime()
 	{
-		return mWaitTime * 1000;
+		return mWaitTime.getValue() * 1000;
 	}
 	
 	public boolean getSaveSubjects()
 	{
-		return mSaveSubjects;
+		return mSaveSubjects.getValue();
 	}
 	
 	public boolean getAllowSubjectDrawing()
 	{
-		return mAllowSubjectDraw;
+		return mAllowSubjectDraw.getValue();
 	}
 	
 	public GameMode getGameMode()
 	{
-		return mMode;
-	}
-	
-	public void setGameMode(GameMode mode)
-	{
-		mMode = mode;
+		return mMode.getValue();
 	}
 	
 	public boolean isValid()
@@ -156,12 +197,12 @@ public class GameBoard
 	
 	public String getMinigameId()
 	{
-		return mMinigameId;
+		return mMinigameId.getValue();
 	}
 	
 	public Minigame getMinigame()
 	{
-		return Minigames.plugin.mdata.getMinigame(mMinigameId);
+		return Minigames.plugin.mdata.getMinigame(mMinigameId.getValue());
 	}
 	
 	public int getStationCount()
@@ -190,11 +231,42 @@ public class GameBoard
 		return mStations;
 	}
 	
+	@Override
+	public void addFlag( String name, Flag<?> flag ) throws IllegalArgumentException
+	{
+		if(mFlags.containsKey(name.toLowerCase()))
+			throw new IllegalArgumentException("Flag already exists");
+		
+		mFlags.put(name.toLowerCase(), flag);
+	}
+	
+	@Override
+	public Flag<?> getFlag( String name )
+	{
+		return mFlags.get(name.toLowerCase());
+	}
+	
+	@Override
+	public Map<String, Flag<?>> getFlags()
+	{
+		return mFlags;
+	}
+	
+	@Override
+	public boolean hasFlag( String name )
+	{
+		return mFlags.containsKey(name.toLowerCase());
+	}
+	
+	@Override
+	public <Type> void onFlagChanged( String name, Flag<Type> flag, Type oldValue )
+	{
+	}
+	
 	public void write(File file) throws IOException
 	{
 		YamlConfiguration config = new YamlConfiguration();
 		
-		config.set("Minigame", mMinigameId);
 		config.set("Size", mSize);
 		config.set("StationCount", mStations.length);
 		for(int i = 0; i < mStations.length; ++i)
@@ -202,6 +274,8 @@ public class GameBoard
 			ConfigurationSection section = config.createSection("Station" + i);
 			mStations[i].save(section);
 		}
+		
+		FlagIO.saveFlags(mFlags, config.createSection("flags"));
 		
 		config.save(file);
 	}
@@ -211,7 +285,6 @@ public class GameBoard
 		YamlConfiguration config = new YamlConfiguration();
 		config.load(file);
 		
-		mMinigameId = config.getString("Minigame");
 		mSize = config.getInt("Size");
 		int count = config.getInt("StationCount");
 		mStations = new PlayerStation[count];
@@ -221,6 +294,8 @@ public class GameBoard
 			mStations[i] = new PlayerStation(this);
 			mStations[i].read(section);
 		}
+		
+		FlagIO.loadFlags(config.getConfigurationSection("flags"), mFlags);
 	}
 	
 	public void broadcast(String message, MinigamePlayer except)
@@ -271,9 +346,12 @@ public class GameBoard
 	{
 		Minigame minigame = getMinigame();
 		PlayerStation station = getStation(player);
-		station.clearStation();
-		station.setPlayer(null);
-		station.setCanModify(false);
+		if(station != null)
+		{
+			station.clearStation();
+			station.setPlayer(null);
+			station.setCanModify(false);
+		}
 		
 		if(minigame.getPlayers().size() <= 2)
 			endGame();
@@ -293,7 +371,7 @@ public class GameBoard
 	
 	public State<GameBoard> getMainState()
 	{
-		switch(mMode)
+		switch(mMode.getValue())
 		{
 		default:
 		case Elimination:

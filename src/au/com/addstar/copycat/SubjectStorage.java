@@ -34,6 +34,8 @@ public class SubjectStorage
 		{
 			subject.save(dest);
 			
+			if(!mLoadedSubjects.containsKey(subject.getSize()))
+				loadSubjects(subject.getSize());
 			mLoadedSubjects.put(subject.getSize(), subject);
 			return true;
 		}

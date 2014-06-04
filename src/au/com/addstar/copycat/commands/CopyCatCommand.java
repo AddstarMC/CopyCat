@@ -9,5 +9,6 @@ public class CopyCatCommand extends RootCommandDispatcher
 		registerCommand(new CreateCommand());
 		registerCommand(new SetStationCommand());
 		registerCommand(new SetupCommand());
+		registerCommand(new SetCommand());
 	}
 }

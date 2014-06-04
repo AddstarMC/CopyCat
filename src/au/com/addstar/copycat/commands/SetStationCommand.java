@@ -3,6 +3,7 @@ package au.com.addstar.copycat.commands;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
@@ -68,24 +69,25 @@ public class SetStationCommand implements ICommand
 		if(board == null)
 			throw new BadArgumentException(0, "Unknown game board " + name + " in " + loc.getWorld().getName());
 		
-		int number = 0;
+		int number = 1;
 		
 		try
 		{
 			number = Integer.parseInt(args[1]);
-			if(number < 0 || number > board.getStationCount())
-				throw new BadArgumentException(1, "Invalid station number. Must be between 0 and " + board.getStationCount());
+			if(number <= 0 || number > board.getStationCount())
+				throw new BadArgumentException(1, "Invalid station number. Must be between 1 and " + board.getStationCount());
 		}
 		catch(NumberFormatException e)
 		{
-			throw new BadArgumentException(1, "Expected station number. Must be between 0 and " + board.getStationCount());
+			throw new BadArgumentException(1, "Expected station number. Must be between 1 and " + board.getStationCount());
 		}
 		
-		PlayerStation station = board.getStation(number);
+		PlayerStation station = board.getStation(number-1);
 		station.setLocationAndFacing(loc, facing);
 		if(args.length == 3 && args[2].equalsIgnoreCase("show"))
 			station.displayLocations((Player)sender);
 		
+		sender.sendMessage(ChatColor.GREEN + "Station " + number + " was sucessfully set for " + name);
 		CopyCatPlugin.instance.saveBoard(name, loc.getWorld());
 		
 		return true;

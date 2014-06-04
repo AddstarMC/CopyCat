@@ -1,5 +1,8 @@
 package au.com.addstar.copycat;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.block.BlockFace;
@@ -91,5 +94,19 @@ public class Util
 		time -= (value * TimeUnit.SECONDS.toMillis(1));
 		
 		return text.toString();
+	}
+	
+	public static List<String> matchString(String str, Collection<String> possibilities)
+	{
+		ArrayList<String> matches = new ArrayList<String>();
+		str = str.toLowerCase();
+		
+		for(String possible : possibilities)
+		{
+			if(possible.toLowerCase().startsWith(str))
+				matches.add(possible);
+		}
+		
+		return matches;
 	}
 }
