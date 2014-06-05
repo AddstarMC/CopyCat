@@ -164,6 +164,31 @@ public class CopyCatPlugin extends JavaPlugin
 		return true;
 	}
 	
+	public void deleteBoard(String name, World world) throws IllegalArgumentException
+	{
+		GameBoard board = getBoard(name, world); 
+		if(board == null)
+			throw new IllegalArgumentException("Unknown board " + name + " in " + world.getName());
+		
+		Minigame game = board.getMinigame();
+		
+		if(game != null && !game.getPlayers().isEmpty())
+			throw new IllegalArgumentException("That game is in progress");
+		
+		File folder = new File(getDataFolder(), "boards");
+		File file = new File(folder, world.getName().toLowerCase() + "-" + name + ".yml");
+		
+		if(file.exists())
+			file.delete();
+		
+		HashMap<String, GameBoard> boards = mBoards.get(world);
+		boards.remove(name);
+		if(boards.isEmpty())
+			mBoards.remove(world);
+		
+		mMinigameToBoard.remove(board.getMinigameId());
+	}
+	
 	public GameBoard getBoard(String name, World world)
 	{
 		HashMap<String, GameBoard> boards = mBoards.get(world);

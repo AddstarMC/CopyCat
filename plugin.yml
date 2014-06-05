@@ -10,6 +10,8 @@ permissions:
     default: OP
   copycat.command.set:
     default: OP
-    
+  copycat.command.delete:
+    default: OP
+
 commands:
   copycat:
