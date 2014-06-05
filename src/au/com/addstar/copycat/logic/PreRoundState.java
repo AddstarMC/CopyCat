@@ -6,6 +6,7 @@ import com.pauldavdesign.mineauz.minigames.minigame.Minigame;
 
 import au.com.addstar.copycat.CopyCatPlugin;
 import au.com.addstar.copycat.GameBoard;
+import au.com.addstar.copycat.Util;
 
 public class PreRoundState extends State<GameBoard>
 {
@@ -21,6 +22,7 @@ public class PreRoundState extends State<GameBoard>
 			else
 			{
 				game.setSubject(CopyCatPlugin.instance.getSubjectStorage().getRandomSubject(game.getSubjectSize()));
+				game.broadcast("Selecting random pattern. Round starts in " + Util.getTimeRemainString(game.getWaitTime()), null);
 				engine.setState(new WaitState());
 			}
 		}

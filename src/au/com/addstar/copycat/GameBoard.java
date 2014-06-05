@@ -19,7 +19,6 @@ import au.com.addstar.copycat.flags.FlagIO;
 import au.com.addstar.copycat.flags.Flaggable;
 import au.com.addstar.copycat.flags.IntegerFlag;
 import au.com.addstar.copycat.flags.StringFlag;
-import au.com.addstar.copycat.flags.TimeFlag;
 import au.com.addstar.copycat.logic.EliminationMainState;
 import au.com.addstar.copycat.logic.PreRoundState;
 import au.com.addstar.copycat.logic.ScoringMainState;
@@ -48,6 +47,7 @@ public class GameBoard implements Flaggable
 	private IntegerFlag mWaitTime;
 	private BooleanFlag mSaveSubjects;
 	private EnumFlag<GameMode> mMode;
+	private IntegerFlag mMaxRoundTime;
 	
 	private HashMap<String, Flag<?>> mFlags;
 	
@@ -85,6 +85,10 @@ public class GameBoard implements Flaggable
 		mMode = new EnumFlag<GameMode>(GameMode.class);
 		mMode.setValue(GameMode.Elimination);
 		mFlags.put("mode", mMode);
+		
+		mMaxRoundTime = new IntegerFlag();
+		mMaxRoundTime.setValue(120);
+		mFlags.put("max-round-time", mMaxRoundTime);
 	}
 	
 	public GameBoard(int players, int size, String minigame, World world)
@@ -158,6 +162,11 @@ public class GameBoard implements Flaggable
 	public long getWaitTime()
 	{
 		return mWaitTime.getValue() * 1000;
+	}
+	
+	public long getMaxRoundTime()
+	{
+		return mMaxRoundTime.getValue() * 1000;
 	}
 	
 	public boolean getSaveSubjects()

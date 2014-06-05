@@ -27,23 +27,27 @@ public class EliminationMainState extends MainState
 	public void onEnd( StateEngine<GameBoard> engine, GameBoard game )
 	{
 		Minigame minigame = game.getMinigame();
-		MinigamePlayer player = mWaiting.iterator().next();
-		player.addDeath();
-
-		player.sendMessage("You did not finish in time. You have lost a life", "error");
-		game.broadcast(player.getDisplayName() + " lost a life.", player);
 		
-		if(player.getDeaths() >= minigame.getLives())
+		for(MinigamePlayer player : mWaiting)
 		{
-			player.sendMessage("You were eliminated from the game.", "error");
+			player.addDeath();
+
+			player.sendMessage("You did not finish in time. You have lost a life", "error");
+			game.broadcast(player.getDisplayName() + " lost a life.", player);
 			
-			Minigames.plugin.pdata.quitMinigame(player, true);
-			if(minigame.getPlayers().size() > 1)
-				game.broadcast(player.getDisplayName() + " was eliminated. Only " + (minigame.getPlayers().size() - 1) + " players remain.", player);
-			else
-				game.broadcast(player.getDisplayName() + " was eliminated.", player);
+			if(player.getDeaths() >= minigame.getLives())
+			{
+				player.sendMessage("You were eliminated from the game.", "error");
+				
+				Minigames.plugin.pdata.quitMinigame(player, true);
+				if(minigame.getPlayers().size() > 1)
+					game.broadcast(player.getDisplayName() + " was eliminated. Only " + (minigame.getPlayers().size() - 1) + " players remain.", player);
+				else
+					game.broadcast(player.getDisplayName() + " was eliminated.", player);
+			}
+
 		}
-		
+
 		super.onEnd(engine, game);
 	}
 	
@@ -62,6 +66,7 @@ public class EliminationMainState extends MainState
 			PlayerStation station = game.getStation(player);
 			if(game.getSubject().matches(station.getPlayLocation(), station.getFacing()))
 			{
+				station.setCanModify(false);
 				game.broadcast(player.getDisplayName() + " has completed the pattern!", null);
 				mWaiting.remove(player);
 				

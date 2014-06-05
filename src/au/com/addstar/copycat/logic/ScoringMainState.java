@@ -62,6 +62,7 @@ public class ScoringMainState extends MainState
 			PlayerStation station = game.getStation(player);
 			if(game.getSubject().matches(station.getPlayLocation(), station.getFacing()))
 			{
+				station.setCanModify(false);
 				game.broadcast(player.getDisplayName() + " has completed the pattern!", null);
 				int points = 0;
 				switch(mNextComplete++)

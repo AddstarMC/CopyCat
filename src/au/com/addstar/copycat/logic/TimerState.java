@@ -16,7 +16,15 @@ public abstract class TimerState extends State<GameBoard>
 			onNotifyTimeLeft(0, engine, game);
 		else
 		{
-			if(left >= 30000)
+			if(left >= 60000)
+			{
+				if(System.currentTimeMillis() - mLastNotifyTime >= 60000)
+				{
+					onNotifyTimeLeft(left, engine, game);
+					mLastNotifyTime = System.currentTimeMillis();
+				}
+			}
+			else if(left >= 30000)
 			{
 				if(System.currentTimeMillis() - mLastNotifyTime >= 15000)
 				{
