@@ -2,6 +2,7 @@ package au.com.addstar.copycat;
 
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -32,6 +33,18 @@ public class CopyCatLogic extends ScoreTypeBase
 	@EventHandler
 	public void onMinigameJoin(JoinMinigameEvent event)
 	{
+		GameBoard board = CopyCatPlugin.instance.getBoardByGame(event.getMinigame().getName(false));
+		if(board != null)
+		{
+			List<String> errors = board.getErrors();
+			if(!errors.isEmpty())
+			{
+				for(String error : errors)
+					event.getPlayer().sendMessage(ChatColor.RED + error);
+
+				event.setCancelled(true);
+			}
+		}
 	}
 	
 	@EventHandler
@@ -52,7 +65,7 @@ public class CopyCatLogic extends ScoreTypeBase
 
 	private GameBoard getBoard(MinigamePlayer player)
 	{
-		if(!player.isInMinigame())
+		if(player == null || !player.isInMinigame())
 			return null;
 			
 		return CopyCatPlugin.instance.getBoardByGame(player.getMinigame().getName(false));
@@ -62,11 +75,11 @@ public class CopyCatLogic extends ScoreTypeBase
 	private void onBlockPlace(BlockPlaceEvent event)
 	{
 		MinigamePlayer player = Minigames.plugin.pdata.getMinigamePlayer(event.getPlayer());
+		
 		GameBoard board = getBoard(player);
 		if(board != null)
 		{
-			PlayerStation station = board.getStation(player);
-			if(!station.isInPlayArea(event.getBlock().getLocation()) || !station.getCanModify())
+			if(!board.canModify(player, event.getBlock().getLocation()))
 				event.setCancelled(true);
 			else
 				board.onPlaceBlock(player);
@@ -77,11 +90,11 @@ public class CopyCatLogic extends ScoreTypeBase
 	private void onBlockBreak(BlockBreakEvent event)
 	{
 		MinigamePlayer player = Minigames.plugin.pdata.getMinigamePlayer(event.getPlayer());
+		
 		GameBoard board = getBoard(player);
 		if(board != null)
 		{
-			PlayerStation station = board.getStation(player);
-			if(!station.isInPlayArea(event.getBlock().getLocation()) || !station.getCanModify())
+			if(!board.canModify(player, event.getBlock().getLocation()))
 				event.setCancelled(true);
 		}
 	}

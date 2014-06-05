@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -40,6 +41,7 @@ public class GameBoard implements Flaggable
 	}
 	
 	private PlayerStation[] mStations;
+	private PatternStation mPatternStation;
 	private int mSize;
 	private World mWorld;
 	
@@ -101,6 +103,8 @@ public class GameBoard implements Flaggable
 		
 		for(int i = 0; i < players; ++i)
 			mStations[i] = new PlayerStation(this);
+		
+		mPatternStation = new PatternStation(this);
 		
 		mSize = size;
 		mMinigameId.setValue(minigame);
@@ -203,6 +207,9 @@ public class GameBoard implements Flaggable
 				errors.add("Player station " + (i+1) + " is not set");
 		}
 		
+		if(mAllowSubjectDraw.getValue() && !mPatternStation.isValid())
+			errors.add("Pattern drawing is allowed but the pattern drawing area has not been set.");
+		
 		return errors;
 	}
 	
@@ -240,6 +247,20 @@ public class GameBoard implements Flaggable
 	public PlayerStation[] getStations()
 	{
 		return mStations;
+	}
+	
+	public PatternStation getPatternStation()
+	{
+		return mPatternStation;
+	}
+	
+	public boolean canModify(MinigamePlayer player, Location location)
+	{
+		if(mPatternStation.getPlayer() == player)
+			return mPatternStation.isInPatternArea(location);
+		
+		PlayerStation station = getStation(player);
+		return (station.getCanModify() && station.isInPlayArea(location));
 	}
 	
 	@Override
@@ -286,6 +307,8 @@ public class GameBoard implements Flaggable
 			mStations[i].save(section);
 		}
 		
+		mPatternStation.save(config.createSection("PatternStation"));
+		
 		FlagIO.saveFlags(mFlags, config.createSection("flags"));
 		
 		config.save(file);
@@ -305,6 +328,10 @@ public class GameBoard implements Flaggable
 			mStations[i] = new PlayerStation(this);
 			mStations[i].read(section);
 		}
+
+		mPatternStation = new PatternStation(this);
+		if(config.isConfigurationSection("PatternStation"))
+			mPatternStation.read(config.getConfigurationSection("PatternStation"));
 		
 		FlagIO.loadFlags(config.getConfigurationSection("flags"), mFlags);
 	}

@@ -5,6 +5,7 @@ import com.pauldavdesign.mineauz.minigames.minigame.Minigame;
 
 import au.com.addstar.copycat.CopyCatPlugin;
 import au.com.addstar.copycat.GameBoard;
+import au.com.addstar.copycat.PatternStation;
 import au.com.addstar.copycat.PlayerStation;
 import au.com.addstar.copycat.Subject;
 import au.com.addstar.copycat.Util;
@@ -15,11 +16,13 @@ public class SubjectDrawState extends TimerState
 	public void onStart( StateEngine<GameBoard> engine, GameBoard game )
 	{
 		Minigame minigame = game.getMinigame();
-		
 		MinigamePlayer player = game.selectNextDrawer();
-		game.getStation(player).setCanModify(true);
+		PatternStation station = game.getPatternStation();
+		
 		game.broadcast(player.getDisplayName() + " is drawing the pattern.", player);
-		player.sendMessage("Draw the pattern in your play area. You have " + Util.getTimeRemainString(game.getSubjectDrawTime()) + ". If you do not fill every block, a random pattern will be used.", "win");
+		player.teleport(station.getSpawnLocation());
+		station.setPlayer(player);
+		player.sendMessage("Draw the pattern in the area in front of you. You have " + Util.getTimeRemainString(game.getSubjectDrawTime()) + ". If you do not fill every block, a random pattern will be used.", "win");
 		minigame.getDefaultPlayerLoadout().equiptLoadout(player);
 		
 		endTime = System.currentTimeMillis() + game.getSubjectDrawTime();
@@ -29,9 +32,12 @@ public class SubjectDrawState extends TimerState
 	public void onEnd( StateEngine<GameBoard> engine, GameBoard game )
 	{
 		MinigamePlayer player = game.getDrawer();
-		PlayerStation station = game.getStation(player);
-		station.setCanModify(true);
-		Subject subject = Subject.from(station.getPlayLocation(), station.getFacing(), game.getSubjectSize());
+		PlayerStation playerStation = game.getStation(player);
+		PatternStation station = game.getPatternStation();
+		station.setPlayer(null);
+		player.teleport(playerStation.getSpawnLocation());
+
+		Subject subject = Subject.from(station.getPatternLocation(), station.getFacing(), game.getSubjectSize());
 		if(subject == null)
 		{
 			game.broadcast("Pattern was not completed in time. Selecting a random pattern.", null);
