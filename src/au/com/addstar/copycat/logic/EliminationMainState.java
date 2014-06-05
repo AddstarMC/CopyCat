@@ -31,6 +31,7 @@ public class EliminationMainState extends MainState
 		for(MinigamePlayer player : mWaiting)
 		{
 			player.addDeath();
+			minigame.setScore(player, minigame.getLives() - player.getDeaths());
 
 			player.sendMessage("You did not finish in time. You have lost a life", "error");
 			game.broadcast(player.getDisplayName() + " lost a life.", player);

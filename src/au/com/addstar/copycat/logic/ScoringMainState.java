@@ -81,6 +81,7 @@ public class ScoringMainState extends MainState
 				if(points > 0)
 				{
 					player.addScore(points);
+					game.getMinigame().setScore(player, player.getScore());
 					if(points != 1)
 					{
 						game.broadcast(player.getDisplayName() + " was awarded " + points + " points.", player);

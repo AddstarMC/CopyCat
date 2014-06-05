@@ -7,10 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.scoreboard.Objective;
 
 import au.com.addstar.copycat.flags.BooleanFlag;
 import au.com.addstar.copycat.flags.EnumFlag;
@@ -347,6 +349,23 @@ public class GameBoard implements Flaggable
 		for(PlayerStation station : mStations)
 			station.clearStation();
 		
+		Objective objective = minigame.getScoreboardManager().getObjective(minigame.getName(false));
+		objective.setDisplayName("\u21D0  " + minigame.getName(true) + "  \u21D2");
+		
+		Bukkit.getScheduler().runTask(CopyCatPlugin.instance, new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				if(mMode.getValue() == GameMode.Elimination)
+				{
+					Minigame minigame = getMinigame();
+					for(MinigamePlayer player : minigame.getPlayers())
+						minigame.setScore(player, minigame.getLives());
+				}
+			}
+		});
+		
 		// Begin the game
 		mEngine.start(new PreRoundState(), this);
 	}
@@ -376,6 +395,12 @@ public class GameBoard implements Flaggable
 	public void endGame()
 	{
 		mEngine.end();
+		
+		for(PlayerStation station : mStations)
+		{
+			station.clearStation();
+			station.setPlayer(null);
+		}
 	}
 	
 	public State<GameBoard> getMainState()
