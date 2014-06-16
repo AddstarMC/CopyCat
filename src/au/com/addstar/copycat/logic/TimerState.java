@@ -32,7 +32,7 @@ public abstract class TimerState extends State<GameBoard>
 					mLastNotifyTime = System.currentTimeMillis();
 				}
 			}
-			else if(left >= 10000)
+			else if(left >= 5000)
 			{
 				if(System.currentTimeMillis() - mLastNotifyTime >= 5000)
 				{

@@ -84,12 +84,12 @@ public class ScoringMainState extends MainState
 					if(points != 1)
 					{
 						game.broadcast(player.getDisplayName() + " was awarded " + points + " points.", player);
-						player.sendMessage("You were awarded " + points + " points.");
+						player.sendMessage("You were awarded " + points + " points.", null);
 					}
 					else
 					{
 						game.broadcast(player.getDisplayName() + " was awarded " + points + " point.", player);
-						player.sendMessage("You were awarded " + points + " point.");
+						player.sendMessage("You were awarded " + points + " point.", null);
 					}
 					
 					if(player.getScore() >= game.getMinigame().getMaxScore())
