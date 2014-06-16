@@ -26,6 +26,8 @@ public class EliminationMainState extends MainState
 	@Override
 	public void onEnd( StateEngine<GameBoard> engine, GameBoard game )
 	{
+		super.onEnd(engine, game);
+		
 		Minigame minigame = game.getMinigame();
 		
 		for(MinigamePlayer player : mWaiting)
@@ -48,8 +50,6 @@ public class EliminationMainState extends MainState
 			}
 
 		}
-
-		super.onEnd(engine, game);
 	}
 	
 	@Override

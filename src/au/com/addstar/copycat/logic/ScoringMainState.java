@@ -29,6 +29,7 @@ public class ScoringMainState extends MainState
 	public void onEnd( StateEngine<GameBoard> engine, GameBoard game )
 	{
 		Minigame minigame = game.getMinigame();
+		super.onEnd(engine, game);
 		
 		MinigamePlayer winner = null;
 		for(MinigamePlayer player : minigame.getPlayers())
@@ -48,8 +49,6 @@ public class ScoringMainState extends MainState
 			for(MinigamePlayer player : players)
 				Minigames.plugin.pdata.quitMinigame(player, true);
 		}
-
-		super.onEnd(engine, game);
 	}
 	
 	@Override
