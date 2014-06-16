@@ -136,9 +136,9 @@ public class PlayerStation
 		BlockFace right = getRight();
 		double size = mBoard.getSubjectSize();
 		double x = 1;
-		double z = 4 + size;
+		double z = mBoard.getBackboardDistance() + size;
 		
-		return mLocation.clone().add(x * right.getModX() + z * mFacing.getModX(), 3, x * right.getModZ() + z * mFacing.getModZ());
+		return mLocation.clone().add(x * right.getModX() + z * mFacing.getModX(), mBoard.getBackboardHeight(), x * right.getModZ() + z * mFacing.getModZ());
 	}
 	
 	public Location getPlayLocation()

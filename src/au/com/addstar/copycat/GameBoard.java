@@ -52,6 +52,8 @@ public class GameBoard implements Flaggable
 	private BooleanFlag mSaveSubjects;
 	private EnumFlag<GameMode> mMode;
 	private IntegerFlag mMaxRoundTime;
+	private IntegerFlag mBackBoardDistance;
+	private IntegerFlag mBackBoardHeight;
 	
 	private HashMap<String, Flag<?>> mFlags;
 	
@@ -93,6 +95,14 @@ public class GameBoard implements Flaggable
 		mMaxRoundTime = new IntegerFlag();
 		mMaxRoundTime.setValue(120);
 		mFlags.put("max-round-time", mMaxRoundTime);
+		
+		mBackBoardDistance = new IntegerFlag();
+		mBackBoardDistance.setValue(4);
+		mFlags.put("backboard-distance", mBackBoardDistance);
+		
+		mBackBoardHeight = new IntegerFlag();
+		mBackBoardHeight.setValue(3);
+		mFlags.put("backboard-height", mBackBoardHeight);
 	}
 	
 	public GameBoard(int players, int size, String minigame, World world)
@@ -188,6 +198,16 @@ public class GameBoard implements Flaggable
 	public GameMode getGameMode()
 	{
 		return mMode.getValue();
+	}
+	
+	public int getBackboardDistance()
+	{
+		return mBackBoardDistance.getValue();
+	}
+	
+	public int getBackboardHeight()
+	{
+		return mBackBoardHeight.getValue();
 	}
 	
 	public boolean isValid()
