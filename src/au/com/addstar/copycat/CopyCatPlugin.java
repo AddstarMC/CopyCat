@@ -2,7 +2,9 @@ package au.com.addstar.copycat;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -246,5 +248,18 @@ public class CopyCatPlugin extends JavaPlugin
 	public SubjectStorage getSubjectStorage()
 	{
 		return mStorage;
+	}
+	
+	public List<String> matchBoard(String name, World world)
+	{
+		name = name.toLowerCase();
+		ArrayList<String> names = new ArrayList<String>();
+		for(String key : mBoards.get(world).keySet())
+		{
+			if(key.toLowerCase().startsWith(name))
+				names.add(key);
+		}
+		
+		return names;
 	}
 }

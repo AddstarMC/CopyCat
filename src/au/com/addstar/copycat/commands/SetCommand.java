@@ -134,7 +134,9 @@ public class SetCommand implements ICommand
 	@Override
 	public List<String> onTabComplete( CommandSender sender, String parent, String label, String[] args )
 	{
-		if(args.length > 1)
+		if(args.length == 1)
+			return CopyCatPlugin.instance.matchBoard(args[0], ((Player)sender).getWorld());
+		else if(args.length > 1)
 		{
 			GameBoard board = CopyCatPlugin.instance.getBoard(args[0], ((Player)sender).getWorld());
 			if(board == null)

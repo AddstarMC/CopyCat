@@ -82,6 +82,8 @@ public class SetupCommand implements ICommand
 	@Override
 	public List<String> onTabComplete( CommandSender sender, String parent, String label, String[] args )
 	{
+		if(args.length == 1)
+			return CopyCatPlugin.instance.matchBoard(args[0], ((Player)sender).getWorld());
 		return null;
 	}
 
