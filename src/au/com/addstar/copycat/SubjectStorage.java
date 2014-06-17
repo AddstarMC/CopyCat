@@ -28,7 +28,7 @@ public class SubjectStorage
 		if(!subjectFolder.exists())
 			subjectFolder.mkdirs();
 		
-		File dest = new File(subjectFolder, UUID.randomUUID().toString() + ".yml");
+		File dest = (subject.getFile() == null ? new File(subjectFolder, UUID.randomUUID().toString() + ".yml") : subject.getFile());
 		
 		try
 		{
@@ -44,6 +44,17 @@ public class SubjectStorage
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	public boolean remove(Subject subject)
+	{
+		if(!mLoadedSubjects.remove(subject.getSize(), subject))
+			return false;
+		
+		if(subject.getFile() == null)
+			return true; // Nothing to delete
+		
+		return subject.getFile().delete();
 	}
 	
 	public void loadSubjects(int size)

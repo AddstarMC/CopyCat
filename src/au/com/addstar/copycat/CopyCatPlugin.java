@@ -14,11 +14,13 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import au.com.addstar.copycat.commands.CopyCatCommand;
 
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableList;
 import com.pauldavdesign.mineauz.minigames.Minigames;
 import com.pauldavdesign.mineauz.minigames.PlayerLoadout;
 import com.pauldavdesign.mineauz.minigames.gametypes.MinigameType;
@@ -34,6 +36,21 @@ public class CopyCatPlugin extends JavaPlugin
 	public static CopyCatPlugin instance;
 	public static final Pattern validNamePattern = Pattern.compile("^[a-zA-Z0-9_]+$");
 	public static final Random rand = new Random();
+	public static final List<ItemStack> blockTypes;
+	
+	static
+	{
+		blockTypes = ImmutableList.<ItemStack>builder()
+			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)0))
+			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)4))
+			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)3))
+			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)9))
+			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)8))
+			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)13))
+			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)14))
+			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)15))
+			.build();
+	}
 	
 	@Override
 	public void onEnable()
@@ -228,14 +245,8 @@ public class CopyCatPlugin extends JavaPlugin
 		PlayerLoadout loadout = minigame.getDefaultPlayerLoadout();
 		loadout.clearLoadout();
 		loadout.addItem(new ItemStack(Material.DIAMOND_PICKAXE), 0);
-		loadout.addItem(new ItemStack(Material.STAINED_CLAY, 64, (short)0), 1);
-		loadout.addItem(new ItemStack(Material.STAINED_CLAY, 64, (short)4), 2);
-		loadout.addItem(new ItemStack(Material.STAINED_CLAY, 64, (short)3), 3);
-		loadout.addItem(new ItemStack(Material.STAINED_CLAY, 64, (short)9), 4);
-		loadout.addItem(new ItemStack(Material.STAINED_CLAY, 64, (short)8), 5);
-		loadout.addItem(new ItemStack(Material.STAINED_CLAY, 64, (short)13), 6);
-		loadout.addItem(new ItemStack(Material.STAINED_CLAY, 64, (short)14), 7);
-		loadout.addItem(new ItemStack(Material.STAINED_CLAY, 64, (short)15), 8);
+		for(int i = 0; i < blockTypes.size(); ++i)
+			loadout.addItem(blockTypes.get(i).clone(), i+1);
 		
 		minigame.setDefaultGamemode(GameMode.SURVIVAL);
 		minigame.setGametypeName("Copy Cat");
@@ -261,5 +272,17 @@ public class CopyCatPlugin extends JavaPlugin
 		}
 		
 		return names;
+	}
+	
+	@SuppressWarnings( "deprecation" )
+	public static boolean isValidBlockType(MaterialData data)
+	{
+		for(ItemStack item : blockTypes)
+		{
+			if(item.getType() == data.getItemType() && item.getDurability() == data.getData())
+				return true;
+		}
+		
+		return false;
 	}
 }

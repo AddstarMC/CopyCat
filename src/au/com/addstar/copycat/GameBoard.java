@@ -65,6 +65,8 @@ public class GameBoard implements Flaggable
 	private MinigamePlayer mSubjectDrawer;
 	private StateEngine<GameBoard> mEngine = new StateEngine<GameBoard>();
 	
+	private EditSession mEditSession;
+	
 	private GameBoard()
 	{
 		mFlags = new HashMap<String, Flag<?>>();
@@ -230,7 +232,19 @@ public class GameBoard implements Flaggable
 		if(mAllowSubjectDraw.getValue() && !mPatternStation.isValid())
 			errors.add("Pattern drawing is allowed but the pattern drawing area has not been set.");
 		
+		if(mEditSession != null)
+			errors.add("The game is being editied currently, please try again later.");
+		
 		return errors;
+	}
+	
+	public boolean isInProgress()
+	{
+		Minigame minigame = getMinigame();
+		if(minigame == null)
+			return false;
+		
+		return (minigame.hasPlayers());
 	}
 	
 	public String getMinigameId()
@@ -460,6 +474,16 @@ public class GameBoard implements Flaggable
 		case Score:
 			return new ScoringMainState();
 		}
+	}
+	
+	void setEditSession(EditSession session)
+	{
+		mEditSession = session;
+	}
+	
+	EditSession getEditSession()
+	{
+		return mEditSession;
 	}
 }
 
