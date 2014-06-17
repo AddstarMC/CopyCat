@@ -1,5 +1,13 @@
 package au.com.addstar.copycat.logic;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.conversations.Conversation;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.conversations.Prompt;
+import org.bukkit.conversations.StringPrompt;
+
 import com.pauldavdesign.mineauz.minigames.MinigamePlayer;
 import com.pauldavdesign.mineauz.minigames.minigame.Minigame;
 
@@ -12,11 +20,21 @@ import au.com.addstar.copycat.Util;
 
 public class SubjectDrawState extends TimerState
 {
+	private Conversation mConversation;
+	private MinigamePlayer mPlayer;
+	
+	private boolean mSkip;
+	
+	private StateEngine<GameBoard> mEngine;
+	private GameBoard mBoard;
+	
 	@Override
 	public void onStart( StateEngine<GameBoard> engine, GameBoard game )
 	{
+		mEngine = engine;
+		mBoard = game;
 		Minigame minigame = game.getMinigame();
-		MinigamePlayer player = game.selectNextDrawer();
+		MinigamePlayer player = mPlayer = game.selectNextDrawer();
 		PatternStation station = game.getPatternStation();
 		
 		game.broadcast(player.getDisplayName() + " is drawing the pattern.", player);
@@ -26,30 +44,47 @@ public class SubjectDrawState extends TimerState
 		minigame.getDefaultPlayerLoadout().equiptLoadout(player);
 		
 		endTime = System.currentTimeMillis() + game.getSubjectDrawTime();
+		
+		mConversation = new ConversationFactory(CopyCatPlugin.instance)
+			.withFirstPrompt(new EditConvo())
+			.withModality(false)
+			.buildConversation(player.getPlayer());
+		
+		mConversation.begin();
 	}
 	
 	@Override
 	public void onEnd( StateEngine<GameBoard> engine, GameBoard game )
 	{
+		mConversation.abandon();
+		
 		MinigamePlayer player = game.getDrawer();
 		PlayerStation playerStation = game.getStation(player);
 		PatternStation station = game.getPatternStation();
 		station.setPlayer(null);
 		player.teleport(playerStation.getSpawnLocation());
 
-		Subject subject = Subject.from(station.getPatternLocation(), station.getFacing(), game.getSubjectSize());
-		if(subject == null)
+		if(mSkip)
 		{
-			game.broadcast("Pattern was not completed in time. Selecting a random pattern.", null);
+			game.broadcast("Selecting a random pattern.", null);
 			game.setSubject(CopyCatPlugin.instance.getSubjectStorage().getRandomSubject(game.getSubjectSize()));
 		}
 		else
 		{
-			game.broadcast("Using pattern created by " + player.getDisplayName(), null);
-			game.setSubject(subject);
-			
-			if(game.getSaveSubjects())
-				CopyCatPlugin.instance.getSubjectStorage().add(subject);
+			Subject subject = Subject.from(station.getPatternLocation(), station.getFacing(), game.getSubjectSize());
+			if(subject == null)
+			{
+				game.broadcast("Pattern was not completed in time. Selecting a random pattern.", null);
+				game.setSubject(CopyCatPlugin.instance.getSubjectStorage().getRandomSubject(game.getSubjectSize()));
+			}
+			else
+			{
+				game.broadcast("Using pattern created by " + player.getDisplayName(), null);
+				game.setSubject(subject);
+				
+				if(game.getSaveSubjects())
+					CopyCatPlugin.instance.getSubjectStorage().add(subject);
+			}
 		}
 		
 		station.clearStation();
@@ -79,6 +114,48 @@ public class SubjectDrawState extends TimerState
 				game.setDrawer(null);
 				engine.abortState(this);
 			}
+		}
+	}
+	
+	private void onInput(String input)
+	{
+		if(input.equalsIgnoreCase("skip"))
+		{
+			mPlayer.sendMessage("You have elected to use a random pattern.", null);
+			mSkip = true;
+			mEngine.setState(mBoard.getMainState());
+		}
+		else if(input.equalsIgnoreCase("done"))
+		{
+			PatternStation station = mBoard.getPatternStation();
+			Subject subject = Subject.from(station.getPatternLocation(), station.getFacing(), mBoard.getSubjectSize());
+			if(subject == null)
+				mPlayer.sendMessage("Your pattern is incomplete. All spots must be used.");
+			else
+				mEngine.setState(mBoard.getMainState());
+		}
+	}
+	
+	private class EditConvo extends StringPrompt
+	{
+		@Override
+		public Prompt acceptInput( ConversationContext context, final String input )
+		{
+			Bukkit.getScheduler().runTask(CopyCatPlugin.instance, new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					onInput(input);
+				}
+			});
+			return this;
+		}
+		
+		@Override
+		public String getPromptText( ConversationContext context )
+		{
+			return ChatColor.translateAlternateColorCodes('&', "You are drawing. Type &eskip &fto use a random pattern. Type &edone&f to say finish drawing");
 		}
 	}
 }
