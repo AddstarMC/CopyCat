@@ -67,14 +67,6 @@ public class EnumFlag<T extends Enum<T>> extends Flag<T>
 	public void read( ConfigurationSection section ) throws InvalidConfigurationException
 	{
 		String name = section.getString("value");
-		for(T e : mEnum)
-		{
-			if(e.name().equals(name))
-			{
-				value = e;
-				break;
-			}
-		}
 		
 		try
 		{
@@ -88,6 +80,15 @@ public class EnumFlag<T extends Enum<T>> extends Flag<T>
 		{
 			e.printStackTrace();
 			throw new InvalidConfigurationException("Could not find enum " + section.getString("enum"));
+		}
+		
+		for(T e : mEnum)
+		{
+			if(e.name().equals(name))
+			{
+				value = e;
+				break;
+			}
 		}
 	}
 

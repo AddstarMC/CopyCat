@@ -441,16 +441,20 @@ public class GameBoard implements Flaggable
 			station.setPlayer(null);
 			station.setCanModify(false);
 		}
-		
-		if(minigame.getPlayers().size() <= 2)
-			endGame();
-		
-		mEngine.sendEvent("leave", player);
+
+		if(mEngine.isRunning())
+		{
+			if(minigame.getPlayers().size() <= 2)
+				endGame();
+			
+			mEngine.sendEvent("leave", player);
+		}
 	}
 	
 	public void onPlaceBlock(MinigamePlayer player)
 	{
-		mEngine.sendEvent("place", player);
+		if(mEngine.isRunning())
+			mEngine.sendEvent("place", player);
 	}
 	
 	public void endGame()

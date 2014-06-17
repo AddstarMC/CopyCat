@@ -21,7 +21,8 @@ public class StateEngine<T> implements Runnable
 	
 	public void end()
 	{
-		mTask.cancel();
+		if(mTask != null)
+			mTask.cancel();
 	}
 	
 	public void setState(State<T> state)
@@ -46,5 +47,10 @@ public class StateEngine<T> implements Runnable
 	public void sendEvent(String name, Object data)
 	{
 		mState.onEvent(name, data, this, mGame);
+	}
+	
+	public boolean isRunning()
+	{
+		return mState != null;
 	}
 }
