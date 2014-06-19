@@ -111,6 +111,7 @@ public class SubjectDrawState extends TimerState
 			MinigamePlayer player = (MinigamePlayer)data;
 			if(player == game.getDrawer())
 			{
+				mConversation.abandon();
 				game.setDrawer(null);
 				engine.abortState(this);
 			}

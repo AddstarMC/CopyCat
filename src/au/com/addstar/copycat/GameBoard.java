@@ -20,6 +20,7 @@ import au.com.addstar.copycat.logic.PreRoundState;
 import au.com.addstar.copycat.logic.ScoringMainState;
 import au.com.addstar.copycat.logic.State;
 import au.com.addstar.copycat.logic.StateEngine;
+import au.com.addstar.monolith.BossDisplay;
 import au.com.addstar.monolith.flag.BooleanFlag;
 import au.com.addstar.monolith.flag.EnumFlag;
 import au.com.addstar.monolith.flag.Flag;
@@ -64,6 +65,7 @@ public class GameBoard implements Flaggable
 	
 	private MinigamePlayer mSubjectDrawer;
 	private StateEngine<GameBoard> mEngine = new StateEngine<GameBoard>();
+	private BossDisplay mBossDisplay;
 	
 	private EditSession mEditSession;
 	
@@ -105,6 +107,8 @@ public class GameBoard implements Flaggable
 		mBackBoardHeight = new IntegerFlag();
 		mBackBoardHeight.setValue(3);
 		mFlags.put("backboard-height", mBackBoardHeight);
+		
+		mBossDisplay = new BossDisplay("Waiting for players", 1);
 	}
 	
 	public GameBoard(int players, int size, String minigame, World world)
@@ -288,6 +292,11 @@ public class GameBoard implements Flaggable
 		return mPatternStation;
 	}
 	
+	public BossDisplay getBossDisplay()
+	{
+		return mBossDisplay;
+	}
+	
 	public boolean canModify(MinigamePlayer player, Location location)
 	{
 		if(mPatternStation.getPlayer() == player)
@@ -433,7 +442,7 @@ public class GameBoard implements Flaggable
 	
 	public void onPlayerLeave(MinigamePlayer player)
 	{
-		Minigame minigame = getMinigame();
+		//Minigame minigame = getMinigame();
 		PlayerStation station = getStation(player);
 		if(station != null)
 		{
@@ -444,8 +453,8 @@ public class GameBoard implements Flaggable
 
 		if(mEngine.isRunning())
 		{
-			if(minigame.getPlayers().size() <= 2)
-				endGame();
+//			if(minigame.getPlayers().size() <= 2)
+//				endGame();
 			
 			mEngine.sendEvent("leave", player);
 		}
@@ -466,6 +475,9 @@ public class GameBoard implements Flaggable
 			station.clearStation();
 			station.setPlayer(null);
 		}
+		
+		mBossDisplay.setText("Waiting for players");
+		mBossDisplay.setPercent(1);
 	}
 	
 	public State<GameBoard> getMainState()

@@ -2,12 +2,17 @@ package au.com.addstar.copycat.logic;
 
 import java.util.HashSet;
 
+import org.bukkit.Sound;
+import org.bukkit.util.Vector;
+
 import com.pauldavdesign.mineauz.minigames.MinigamePlayer;
 import com.pauldavdesign.mineauz.minigames.Minigames;
 import com.pauldavdesign.mineauz.minigames.minigame.Minigame;
 
 import au.com.addstar.copycat.GameBoard;
 import au.com.addstar.copycat.PlayerStation;
+import au.com.addstar.monolith.MonoWorld;
+import au.com.addstar.monolith.ParticleEffect;
 
 public class ScoringMainState extends MainState
 {
@@ -62,7 +67,14 @@ public class ScoringMainState extends MainState
 			if(game.getSubject().matches(station.getPlayLocation(), station.getFacing()))
 			{
 				station.setCanModify(false);
+				game.getWorld().playSound(player.getPlayer().getLocation(), Sound.LEVEL_UP, 1.6f, 10);
+				MonoWorld.getWorld(game.getWorld()).playParticleEffect(player.getPlayer().getLocation(), ParticleEffect.VILLAGER_HAPPY, 0, 10, new Vector(1, 1, 1));
+				
 				game.broadcast(player.getDisplayName() + " has completed the pattern!", null);
+				game.getBossDisplay().setText(player.getDisplayName() + " Finished");
+				game.getBossDisplay().setPercent(1 - (mWaiting.size() / (float)game.getMinigame().getPlayers().size()));
+				lastMessageTime = System.currentTimeMillis();
+				
 				int points = 0;
 				switch(mNextComplete++)
 				{
@@ -102,7 +114,7 @@ public class ScoringMainState extends MainState
 				mWaiting.remove(player);
 				
 				if(mWaiting.isEmpty())
-					engine.setState(new PreRoundState());
+					engine.setState(new BetweenRoundState());
 			}
 		}
 	}

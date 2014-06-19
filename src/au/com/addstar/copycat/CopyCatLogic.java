@@ -8,8 +8,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
+import au.com.addstar.monolith.MonoPlayer;
+
 import com.pauldavdesign.mineauz.minigames.MinigamePlayer;
 import com.pauldavdesign.mineauz.minigames.Minigames;
+import com.pauldavdesign.mineauz.minigames.events.EndMinigameEvent;
 import com.pauldavdesign.mineauz.minigames.events.JoinMinigameEvent;
 import com.pauldavdesign.mineauz.minigames.events.QuitMinigameEvent;
 import com.pauldavdesign.mineauz.minigames.events.StartMinigameEvent;
@@ -44,6 +47,8 @@ public class CopyCatLogic extends ScoreTypeBase
 
 				event.setCancelled(true);
 			}
+			
+			MonoPlayer.getPlayer(event.getPlayer()).setBossBarDisplay(board.getBossDisplay());
 		}
 	}
 	
@@ -60,7 +65,21 @@ public class CopyCatLogic extends ScoreTypeBase
 	{
 		GameBoard board = CopyCatPlugin.instance.getBoardByGame(event.getMinigame().getName(false));
 		if(board != null)
+		{
 			board.onPlayerLeave(event.getMinigamePlayer());
+			MonoPlayer.getPlayer(event.getPlayer()).setBossBarDisplay(null);
+		}
+	}
+	
+	@EventHandler
+	public void onMinigameEnd(EndMinigameEvent event)
+	{
+		GameBoard board = CopyCatPlugin.instance.getBoardByGame(event.getMinigame().getName(false));
+		if(board != null)
+		{
+			for(MinigamePlayer player : event.getWinners())
+				MonoPlayer.getPlayer(player.getPlayer()).setBossBarDisplay(null);
+		}
 	}
 
 	private GameBoard getBoard(MinigamePlayer player)

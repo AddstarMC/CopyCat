@@ -9,6 +9,8 @@ import au.com.addstar.copycat.Util;
 
 public abstract class MainState extends TimerState
 {
+	protected long lastMessageTime = 0;
+	protected long lastTimeOutput = 0;
 	@Override
 	public void onStart( StateEngine<GameBoard> engine, GameBoard game )
 	{
@@ -28,13 +30,16 @@ public abstract class MainState extends TimerState
 			minigame.getDefaultPlayerLoadout().equiptLoadout(player);
 		
 		endTime = System.currentTimeMillis() + game.getMaxRoundTime();
+		game.getBossDisplay().setText("Start Copying");
+		game.getBossDisplay().setPercent(0);
+		lastMessageTime = System.currentTimeMillis();
 	}
 	
 	@Override
 	protected void onNotifyTimeLeft( long remaining, StateEngine<GameBoard> engine, GameBoard game )
 	{
 		if(remaining == 0)
-			engine.setState(new PreRoundState());
+			engine.setState(new BetweenRoundState());
 		else
 			game.broadcast(Util.getTimeRemainString(remaining) + " left in the round.", null);
 	}
@@ -42,10 +47,25 @@ public abstract class MainState extends TimerState
 	@Override
 	public void onEnd( StateEngine<GameBoard> engine, GameBoard game )
 	{
-		for(PlayerStation station : game.getStations())
+		
+	}
+	
+	@Override
+	public void onTick( StateEngine<GameBoard> engine, GameBoard game )
+	{
+		super.onTick(engine, game);
+
+		long current = System.currentTimeMillis();
+		long left = endTime - current;
+		
+		if(current - lastMessageTime >= 5000)
 		{
-			station.setCanModify(false);
-			station.clearStation();
+			if(current - lastTimeOutput >= 1000)
+			{
+				game.getBossDisplay().setText("Time left: " + Util.getTimeRemainString(left));
+				lastTimeOutput = current;
+			}
 		}
+		
 	}
 }
