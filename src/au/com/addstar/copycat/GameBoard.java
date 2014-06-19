@@ -442,7 +442,7 @@ public class GameBoard implements Flaggable
 	
 	public void onPlayerLeave(MinigamePlayer player)
 	{
-		//Minigame minigame = getMinigame();
+		Minigame minigame = getMinigame();
 		PlayerStation station = getStation(player);
 		if(station != null)
 		{
@@ -453,8 +453,8 @@ public class GameBoard implements Flaggable
 
 		if(mEngine.isRunning())
 		{
-//			if(minigame.getPlayers().size() <= 2)
-//				endGame();
+			if(minigame.getPlayers().size() <= 2)
+				endGame();
 			
 			mEngine.sendEvent("leave", player);
 		}

@@ -18,6 +18,7 @@ public class PreRoundState extends State<GameBoard>
 		if(minigame.getPlayers().size() > 1)
 		{
 			game.getBossDisplay().setText("Waiting");
+			game.getBossDisplay().setPercent(1);
 			if(game.getAllowSubjectDrawing())
 				engine.setState(new SubjectDrawState());
 			else

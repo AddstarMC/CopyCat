@@ -64,6 +64,7 @@ public class Util
 	public static String getTimeRemainString(long time)
 	{
 		time = Math.round(time / 1000f) * 1000;
+		long minutes = 0;
 		
 		StringBuilder text = new StringBuilder();
 		if(time > TimeUnit.MINUTES.toMillis(1))
@@ -72,6 +73,7 @@ public class Util
 				text.append(" ");
 			
 			long value = time / TimeUnit.MINUTES.toMillis(1);
+			minutes = value;
 			text.append(String.valueOf(value));
 			text.append(" ");
 			if(value != 1)
@@ -81,17 +83,20 @@ public class Util
 			time -= (value * TimeUnit.MINUTES.toMillis(1));
 		}
 		
-		if(text.length() != 0)
+		if(minutes < 1 || time >= 1000)
+		{
+			if(text.length() != 0)
+				text.append(" ");
+			
+			long value = time / TimeUnit.SECONDS.toMillis(1);
+			text.append(String.valueOf(value));
 			text.append(" ");
-		
-		long value = time / TimeUnit.SECONDS.toMillis(1);
-		text.append(String.valueOf(value));
-		text.append(" ");
-		if(value != 1)
-			text.append("Seconds");
-		else
-			text.append("Second");
-		time -= (value * TimeUnit.SECONDS.toMillis(1));
+			if(value != 1)
+				text.append("Seconds");
+			else
+				text.append("Second");
+			time -= (value * TimeUnit.SECONDS.toMillis(1));
+		}
 		
 		return text.toString();
 	}

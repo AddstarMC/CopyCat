@@ -53,4 +53,9 @@ public class StateEngine<T> implements Runnable
 	{
 		return mState != null;
 	}
+	
+	public State<T> getCurrentState()
+	{
+		return mState;
+	}
 }

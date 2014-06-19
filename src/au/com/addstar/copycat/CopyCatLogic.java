@@ -66,7 +66,9 @@ public class CopyCatLogic extends ScoreTypeBase
 		GameBoard board = CopyCatPlugin.instance.getBoardByGame(event.getMinigame().getName(false));
 		if(board != null)
 		{
-			board.onPlayerLeave(event.getMinigamePlayer());
+			if(!event.isForced())
+				board.onPlayerLeave(event.getMinigamePlayer());
+			
 			MonoPlayer.getPlayer(event.getPlayer()).setBossBarDisplay(null);
 		}
 	}
