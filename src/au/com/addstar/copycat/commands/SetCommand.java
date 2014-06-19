@@ -11,7 +11,10 @@ import org.bukkit.entity.Player;
 import au.com.addstar.copycat.CopyCatPlugin;
 import au.com.addstar.copycat.GameBoard;
 import au.com.addstar.copycat.Util;
-import au.com.addstar.copycat.flags.Flag;
+import au.com.addstar.monolith.command.BadArgumentException;
+import au.com.addstar.monolith.command.CommandSenderType;
+import au.com.addstar.monolith.command.ICommand;
+import au.com.addstar.monolith.flag.Flag;
 
 public class SetCommand implements ICommand
 {

@@ -13,6 +13,9 @@ import au.com.addstar.copycat.CopyCatPlugin;
 import au.com.addstar.copycat.GameBoard;
 import au.com.addstar.copycat.PatternStation;
 import au.com.addstar.copycat.Util;
+import au.com.addstar.monolith.command.BadArgumentException;
+import au.com.addstar.monolith.command.CommandSenderType;
+import au.com.addstar.monolith.command.ICommand;
 
 public class SetPatternStationCommand implements ICommand
 {

@@ -12,6 +12,9 @@ import com.pauldavdesign.mineauz.minigames.Minigames;
 
 import au.com.addstar.copycat.CopyCatPlugin;
 import au.com.addstar.copycat.GameBoard;
+import au.com.addstar.monolith.command.BadArgumentException;
+import au.com.addstar.monolith.command.CommandSenderType;
+import au.com.addstar.monolith.command.ICommand;
 
 public class CreateCommand implements ICommand
 {

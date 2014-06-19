@@ -45,7 +45,7 @@ public class CopyCatPlugin extends JavaPlugin
 			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)4))
 			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)3))
 			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)9))
-			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)8))
+			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)12))
 			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)13))
 			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)14))
 			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)15))

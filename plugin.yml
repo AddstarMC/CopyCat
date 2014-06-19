@@ -3,7 +3,7 @@ version: ${pom.version}
 
 main: au.com.addstar.copycat.CopyCatPlugin
 
-depend: [Minigames]
+depend: [Minigames, Monolith]
 
 permissions:
   copycat.command.create:

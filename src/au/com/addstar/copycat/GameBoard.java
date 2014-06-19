@@ -15,18 +15,18 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scoreboard.Objective;
 
-import au.com.addstar.copycat.flags.BooleanFlag;
-import au.com.addstar.copycat.flags.EnumFlag;
-import au.com.addstar.copycat.flags.Flag;
-import au.com.addstar.copycat.flags.FlagIO;
-import au.com.addstar.copycat.flags.Flaggable;
-import au.com.addstar.copycat.flags.IntegerFlag;
-import au.com.addstar.copycat.flags.StringFlag;
 import au.com.addstar.copycat.logic.EliminationMainState;
 import au.com.addstar.copycat.logic.PreRoundState;
 import au.com.addstar.copycat.logic.ScoringMainState;
 import au.com.addstar.copycat.logic.State;
 import au.com.addstar.copycat.logic.StateEngine;
+import au.com.addstar.monolith.flag.BooleanFlag;
+import au.com.addstar.monolith.flag.EnumFlag;
+import au.com.addstar.monolith.flag.Flag;
+import au.com.addstar.monolith.flag.FlagIO;
+import au.com.addstar.monolith.flag.Flaggable;
+import au.com.addstar.monolith.flag.IntegerFlag;
+import au.com.addstar.monolith.flag.StringFlag;
 
 import com.pauldavdesign.mineauz.minigames.MinigamePlayer;
 import com.pauldavdesign.mineauz.minigames.Minigames;

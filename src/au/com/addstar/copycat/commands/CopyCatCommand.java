@@ -1,5 +1,7 @@
 package au.com.addstar.copycat.commands;
 
+import au.com.addstar.monolith.command.RootCommandDispatcher;
+
 public class CopyCatCommand extends RootCommandDispatcher
 {
 	public CopyCatCommand()
