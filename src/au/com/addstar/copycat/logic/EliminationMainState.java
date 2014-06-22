@@ -52,7 +52,7 @@ public class EliminationMainState extends MainState
 				Minigames.plugin.pdata.quitMinigame(player, true);
 				
 				if(minigame.getPlayers().size() > 1)
-					game.broadcast(player.getDisplayName() + " was eliminated. Only " + (minigame.getPlayers().size() - 1) + " players remain.", player);
+					game.broadcast(player.getDisplayName() + " was eliminated. Only " + minigame.getPlayers().size() + " players remain.", player);
 				else
 					game.broadcast(player.getDisplayName() + " was eliminated.", player);
 			}
