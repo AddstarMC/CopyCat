@@ -33,9 +33,8 @@ public class PreRoundState extends State<GameBoard>
 		{
 			MinigamePlayer winner = minigame.getPlayers().get(0);
 			Minigames.plugin.pdata.endMinigame(winner);
-			engine.end();
-			game.getBossDisplay().setText("Waiting for players");
-			game.getBossDisplay().setPercent(1);
+			
+			game.endGame();
 		}
 	}
 }

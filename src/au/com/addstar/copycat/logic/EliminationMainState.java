@@ -48,6 +48,8 @@ public class EliminationMainState extends MainState
 			if(player.getDeaths() >= minigame.getLives())
 			{
 				player.sendMessage("You were eliminated from the game.", "error");
+				PlayerStation station = game.getStation(player);
+				station.setPlayer(null);
 				
 				Minigames.plugin.pdata.quitMinigame(player, true);
 				

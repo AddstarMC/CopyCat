@@ -52,7 +52,11 @@ public class ScoringMainState extends MainState
 			players.remove(winner);
 			
 			for(MinigamePlayer player : players)
+			{
+				PlayerStation station = game.getStation(player);
+				station.setPlayer(null);
 				Minigames.plugin.pdata.quitMinigame(player, true);
+			}
 		}
 	}
 	
