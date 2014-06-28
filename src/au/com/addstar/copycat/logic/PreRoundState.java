@@ -1,5 +1,7 @@
 package au.com.addstar.copycat.logic;
 
+import java.util.Collections;
+
 import com.pauldavdesign.mineauz.minigames.MinigamePlayer;
 import com.pauldavdesign.mineauz.minigames.Minigames;
 import com.pauldavdesign.mineauz.minigames.minigame.Minigame;
@@ -31,9 +33,7 @@ public class PreRoundState extends State<GameBoard>
 		// End of game
 		else
 		{
-			MinigamePlayer winner = minigame.getPlayers().get(0);
-			Minigames.plugin.pdata.endMinigame(winner);
-			
+			Minigames.plugin.pdata.endMinigame(minigame, minigame.getPlayers(), Collections.<MinigamePlayer>emptyList());
 			game.endGame();
 		}
 	}

@@ -2,6 +2,7 @@ package au.com.addstar.copycat;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -34,9 +35,12 @@ public class CopyCatLogic extends ScoreTypeBase
 	}
 	
 	@EventHandler
-	public void onMinigameJoin(JoinMinigameEvent event)
+	public void onMinigameJoin(final JoinMinigameEvent event)
 	{
-		GameBoard board = CopyCatPlugin.instance.getBoardByGame(event.getMinigame().getName(false));
+		if(event.isCancelled())
+			return;
+		
+		final GameBoard board = CopyCatPlugin.instance.getBoardByGame(event.getMinigame().getName(false));
 		if(board != null)
 		{
 			List<String> errors = board.getErrors();
@@ -48,7 +52,15 @@ public class CopyCatLogic extends ScoreTypeBase
 				event.setCancelled(true);
 			}
 			
-			MonoPlayer.getPlayer(event.getPlayer()).setBossBarDisplay(board.getBossDisplay());
+			Bukkit.getScheduler().runTask(CopyCatPlugin.instance, new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					if(event.getMinigamePlayer().isInMinigame())
+						MonoPlayer.getPlayer(event.getPlayer()).setBossBarDisplay(board.getBossDisplay());
+				}
+			});
 		}
 	}
 	

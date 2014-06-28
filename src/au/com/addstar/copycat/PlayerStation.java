@@ -1,5 +1,7 @@
 package au.com.addstar.copycat;
 
+import java.util.Collection;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -7,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -81,6 +84,25 @@ public class PlayerStation
 				// Play area
 				block = world.getBlockAt(cornerPlay.getBlockX() + x * right.getModX() + z * mFacing.getModX(), cornerPlay.getBlockY(), cornerPlay.getBlockZ() + x * right.getModZ() + z * mFacing.getModZ());
 				block.setType(Material.AIR);
+			}
+		}
+		
+		Collection<Item> items = world.getEntitiesByClass(Item.class);
+		
+		float offsetC = mBoard.getSubjectSize() / 2f; 
+		float maxSize = offsetC + 4; 
+		Location center = corner.clone().add(right.getModX() * offsetC + mFacing.getModX() * offsetC, 0, right.getModZ() * offsetC + mFacing.getModZ() * offsetC);
+		Location temp = new Location(null, 0, 0, 0);
+		
+		for(Item item : items)
+		{
+			item.getLocation(temp);
+			
+			if(Math.abs(temp.getX() - center.getX()) < maxSize &&
+			   Math.abs(temp.getZ() - center.getZ()) < maxSize &&
+			   Math.abs(temp.getY() - center.getY()) < 3)
+			{
+				item.remove();
 			}
 		}
 	}
