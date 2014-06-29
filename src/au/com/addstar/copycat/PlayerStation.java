@@ -91,7 +91,7 @@ public class PlayerStation
 		
 		float offsetC = mBoard.getSubjectSize() / 2f; 
 		float maxSize = offsetC + 4; 
-		Location center = corner.clone().add(right.getModX() * offsetC + mFacing.getModX() * offsetC, 0, right.getModZ() * offsetC + mFacing.getModZ() * offsetC);
+		Location center = cornerPlay.clone().add(right.getModX() * offsetC + mFacing.getModX() * offsetC, 0, right.getModZ() * offsetC + mFacing.getModZ() * offsetC);
 		Location temp = new Location(null, 0, 0, 0);
 		
 		for(Item item : items)
