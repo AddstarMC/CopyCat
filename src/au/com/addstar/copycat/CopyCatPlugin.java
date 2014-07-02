@@ -162,6 +162,7 @@ public class CopyCatPlugin extends JavaPlugin
 	
 	public boolean saveBoard(String name, World world)
 	{
+		name = name.toLowerCase();
 		GameBoard board = getBoard(name, world);
 		if(board == null)
 			return false;
@@ -185,6 +186,7 @@ public class CopyCatPlugin extends JavaPlugin
 	
 	public void deleteBoard(String name, World world) throws IllegalArgumentException
 	{
+		name = name.toLowerCase();
 		GameBoard board = getBoard(name, world); 
 		if(board == null)
 			throw new IllegalArgumentException("Unknown board " + name + " in " + world.getName());
