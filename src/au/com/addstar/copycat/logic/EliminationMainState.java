@@ -42,8 +42,8 @@ public class EliminationMainState extends MainState
 
 			player.sendMessage("You did not finish in time. You have lost a life", "error");
 			game.broadcast(player.getDisplayName() + " lost a life.", player);
-			game.getWorld().playSound(player.getPlayer().getLocation(), Sound.IRONGOLEM_HIT, 1f, 10);
-			MonoWorld.getWorld(game.getWorld()).playParticleEffect(player.getPlayer().getLocation(), ParticleEffect.VILLAGER_ANGRY, 0, 10, new Vector(1, 1, 1));
+			player.getPlayer().getWorld().playSound(player.getPlayer().getLocation(), Sound.IRONGOLEM_HIT, 1f, 10);
+			MonoWorld.getWorld(player.getPlayer().getWorld()).playParticleEffect(player.getPlayer().getLocation(), ParticleEffect.VILLAGER_ANGRY, 0, 10, new Vector(1, 1, 1));
 			
 			if(player.getDeaths() >= minigame.getLives())
 			{
@@ -82,8 +82,8 @@ public class EliminationMainState extends MainState
 				game.getBossDisplay().setText(player.getDisplayName() + " Finished");
 				lastMessageTime = System.currentTimeMillis();
 				
-				game.getWorld().playSound(player.getPlayer().getLocation(), Sound.LEVEL_UP, 1.6f, 10);
-				MonoWorld.getWorld(game.getWorld()).playParticleEffect(player.getPlayer().getLocation(), ParticleEffect.VILLAGER_HAPPY, 0, 10, new Vector(1, 1, 1));
+				player.getPlayer().getWorld().playSound(player.getPlayer().getLocation(), Sound.LEVEL_UP, 1.6f, 10);
+				MonoWorld.getWorld(player.getPlayer().getWorld()).playParticleEffect(player.getPlayer().getLocation(), ParticleEffect.VILLAGER_HAPPY, 0, 10, new Vector(1, 1, 1));
 				
 				mWaiting.remove(player);
 				game.getBossDisplay().setPercent(1 - (mWaiting.size() / (float)game.getMinigame().getPlayers().size()));

@@ -41,13 +41,13 @@ public class SubjectDrawState extends TimerState
 		game.broadcast(player.getDisplayName() + " is drawing the pattern.", player);
 		player.teleport(station.getSpawnLocation());
 		station.setPlayer(player);
-		player.sendMessage("Draw the pattern in the area in front of you. You have " + Util.getTimeRemainString(game.getSubjectDrawTime()) + ". If you do not fill every block, a random pattern will be used.", "win");
+		player.sendMessage("Draw the pattern in the area in front of you. You have " + Util.getTimeRemainString(game.getModule().getSubjectDrawTime()) + ". If you do not fill every block, a random pattern will be used.", "win");
 		
 		LoadoutModule module = LoadoutModule.getMinigameModule(minigame);
 		PlayerLoadout defaultLoadout = module.getLoadout("default");
 		defaultLoadout.equiptLoadout(player);
 		
-		endTime = System.currentTimeMillis() + game.getSubjectDrawTime();
+		endTime = System.currentTimeMillis() + game.getModule().getSubjectDrawTime();
 		
 		mConversation = new ConversationFactory(CopyCatPlugin.instance)
 			.withFirstPrompt(new EditConvo())
@@ -86,7 +86,7 @@ public class SubjectDrawState extends TimerState
 				game.broadcast("Using pattern created by " + player.getDisplayName(), null);
 				game.setSubject(subject);
 				
-				if(game.getSaveSubjects())
+				if(game.getModule().getSaveSubjects())
 					CopyCatPlugin.instance.getSubjectStorage().add(subject);
 			}
 		}

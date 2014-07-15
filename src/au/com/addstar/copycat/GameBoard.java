@@ -1,18 +1,12 @@
 package au.com.addstar.copycat;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scoreboard.Objective;
 
 import au.com.addstar.copycat.logic.EliminationMainState;
@@ -21,19 +15,11 @@ import au.com.addstar.copycat.logic.ScoringMainState;
 import au.com.addstar.copycat.logic.State;
 import au.com.addstar.copycat.logic.StateEngine;
 import au.com.addstar.monolith.BossDisplay;
-import au.com.addstar.monolith.flag.BooleanFlag;
-import au.com.addstar.monolith.flag.EnumFlag;
-import au.com.addstar.monolith.flag.Flag;
-import au.com.addstar.monolith.flag.FlagIO;
-import au.com.addstar.monolith.flag.Flaggable;
-import au.com.addstar.monolith.flag.IntegerFlag;
-import au.com.addstar.monolith.flag.StringFlag;
-
 import au.com.mineauz.minigames.MinigamePlayer;
 import au.com.mineauz.minigames.Minigames;
 import au.com.mineauz.minigames.minigame.Minigame;
 
-public class GameBoard implements Flaggable
+public class GameBoard
 {
 	public enum GameMode
 	{
@@ -44,19 +30,8 @@ public class GameBoard implements Flaggable
 	private PlayerStation[] mStations;
 	private PatternStation mPatternStation;
 	private int mSize;
-	private World mWorld;
 	
-	private StringFlag mMinigameId;
-	private IntegerFlag mSubjectDrawTime;
-	private BooleanFlag mAllowSubjectDraw;
-	private IntegerFlag mWaitTime;
-	private BooleanFlag mSaveSubjects;
-	private EnumFlag<GameMode> mMode;
-	private IntegerFlag mMaxRoundTime;
-	private IntegerFlag mBackBoardDistance;
-	private IntegerFlag mBackBoardHeight;
-	
-	private HashMap<String, Flag<?>> mFlags;
+	private CopyCatModule mModule;
 	
 	// In game vars
 	
@@ -71,47 +46,10 @@ public class GameBoard implements Flaggable
 	
 	private GameBoard()
 	{
-		mFlags = new HashMap<String, Flag<?>>();
-		
-		mMinigameId = new StringFlag();
-		mFlags.put("minigame", mMinigameId);
-		
-		mSubjectDrawTime = new IntegerFlag();
-		mSubjectDrawTime.setValue(60);
-		mFlags.put("pattern-draw-time", mSubjectDrawTime);
-		
-		mAllowSubjectDraw = new BooleanFlag();
-		mAllowSubjectDraw.setValue(true);
-		mFlags.put("pattern-draw-enabled", mAllowSubjectDraw);
-		
-		mWaitTime = new IntegerFlag();
-		mWaitTime.setValue(10);
-		mFlags.put("wait-time", mWaitTime);
-		
-		mSaveSubjects = new BooleanFlag();
-		mSaveSubjects.setValue(true);
-		mFlags.put("pattern-save", mSaveSubjects);
-		
-		mMode = new EnumFlag<GameMode>(GameMode.class);
-		mMode.setValue(GameMode.Elimination);
-		mFlags.put("mode", mMode);
-		
-		mMaxRoundTime = new IntegerFlag();
-		mMaxRoundTime.setValue(120);
-		mFlags.put("max-round-time", mMaxRoundTime);
-		
-		mBackBoardDistance = new IntegerFlag();
-		mBackBoardDistance.setValue(4);
-		mFlags.put("backboard-distance", mBackBoardDistance);
-		
-		mBackBoardHeight = new IntegerFlag();
-		mBackBoardHeight.setValue(3);
-		mFlags.put("backboard-height", mBackBoardHeight);
-		
 		mBossDisplay = new BossDisplay("Waiting for players", 1);
 	}
 	
-	public GameBoard(int players, int size, String minigame, World world)
+	public GameBoard(int players, int size)
 	{
 		this();
 		
@@ -123,26 +61,33 @@ public class GameBoard implements Flaggable
 		mPatternStation = new PatternStation(this);
 		
 		mSize = size;
-		mMinigameId.setValue(minigame);
-		mWorld = world;
 	}
 	
-	public GameBoard(File file, World world) throws IOException, InvalidConfigurationException
+	public GameBoard(ConfigurationSection section)
 	{
 		this();
 		
-		mWorld = world;
-		read(file);
+		read(section);
 	}
 	
-	public World getWorld()
+	public void initialize(CopyCatModule module)
 	{
-		return mWorld;
+		mModule = module;
+	}
+	
+	public CopyCatModule getModule()
+	{
+		return mModule;
 	}
 	
 	public int getSubjectSize()
 	{
 		return mSize;
+	}
+	
+	public void setSubjectSize(int size)
+	{
+		mSize = size;
 	}
 	
 	public Subject getSubject()
@@ -176,46 +121,6 @@ public class GameBoard implements Flaggable
 		return mSubjectDrawer;
 	}
 	
-	public long getSubjectDrawTime()
-	{
-		return mSubjectDrawTime.getValue() * 1000;
-	}
-	
-	public long getWaitTime()
-	{
-		return mWaitTime.getValue() * 1000;
-	}
-	
-	public long getMaxRoundTime()
-	{
-		return mMaxRoundTime.getValue() * 1000;
-	}
-	
-	public boolean getSaveSubjects()
-	{
-		return mSaveSubjects.getValue();
-	}
-	
-	public boolean getAllowSubjectDrawing()
-	{
-		return mAllowSubjectDraw.getValue();
-	}
-	
-	public GameMode getGameMode()
-	{
-		return mMode.getValue();
-	}
-	
-	public int getBackboardDistance()
-	{
-		return mBackBoardDistance.getValue();
-	}
-	
-	public int getBackboardHeight()
-	{
-		return mBackBoardHeight.getValue();
-	}
-	
 	public boolean isValid()
 	{
 		return getErrors().isEmpty();
@@ -224,8 +129,6 @@ public class GameBoard implements Flaggable
 	public List<String> getErrors()
 	{
 		ArrayList<String> errors = new ArrayList<String>();
-		if(getMinigame() == null)
-			errors.add("Minigame " + mMinigameId + " does not exist");
 		
 		for(int i = 0; i < mStations.length; ++i)
 		{
@@ -233,7 +136,7 @@ public class GameBoard implements Flaggable
 				errors.add("Player station " + (i+1) + " is not set");
 		}
 		
-		if(mAllowSubjectDraw.getValue() && !mPatternStation.isValid())
+		if(mModule.getAllowSubjectDraw() && !mPatternStation.isValid())
 			errors.add("Pattern drawing is allowed but the pattern drawing area has not been set.");
 		
 		if(mEditSession != null)
@@ -251,14 +154,14 @@ public class GameBoard implements Flaggable
 		return (minigame.hasPlayers());
 	}
 	
-	public String getMinigameId()
-	{
-		return mMinigameId.getValue();
-	}
-	
 	public Minigame getMinigame()
 	{
-		return Minigames.plugin.mdata.getMinigame(mMinigameId.getValue());
+		return mModule.getMinigame();
+	}
+	
+	public void setStationCount(int count)
+	{
+		mStations = Arrays.copyOf(mStations, count);
 	}
 	
 	public int getStationCount()
@@ -306,42 +209,8 @@ public class GameBoard implements Flaggable
 		return (station.getCanModify() && station.isInPlayArea(location));
 	}
 	
-	@Override
-	public void addFlag( String name, Flag<?> flag ) throws IllegalArgumentException
+	public void write(ConfigurationSection config)
 	{
-		if(mFlags.containsKey(name.toLowerCase()))
-			throw new IllegalArgumentException("Flag already exists");
-		
-		mFlags.put(name.toLowerCase(), flag);
-	}
-	
-	@Override
-	public Flag<?> getFlag( String name )
-	{
-		return mFlags.get(name.toLowerCase());
-	}
-	
-	@Override
-	public Map<String, Flag<?>> getFlags()
-	{
-		return mFlags;
-	}
-	
-	@Override
-	public boolean hasFlag( String name )
-	{
-		return mFlags.containsKey(name.toLowerCase());
-	}
-	
-	@Override
-	public <Type> void onFlagChanged( String name, Flag<Type> flag, Type oldValue )
-	{
-	}
-	
-	public void write(File file) throws IOException
-	{
-		YamlConfiguration config = new YamlConfiguration();
-		
 		config.set("Size", mSize);
 		config.set("StationCount", mStations.length);
 		for(int i = 0; i < mStations.length; ++i)
@@ -351,17 +220,10 @@ public class GameBoard implements Flaggable
 		}
 		
 		mPatternStation.save(config.createSection("PatternStation"));
-		
-		FlagIO.saveFlags(mFlags, config.createSection("flags"));
-		
-		config.save(file);
 	}
 	
-	public void read(File file) throws IOException, InvalidConfigurationException
+	public void read(ConfigurationSection config)
 	{
-		YamlConfiguration config = new YamlConfiguration();
-		config.load(file);
-		
 		mSize = config.getInt("Size");
 		int count = config.getInt("StationCount");
 		mStations = new PlayerStation[count];
@@ -375,8 +237,6 @@ public class GameBoard implements Flaggable
 		mPatternStation = new PatternStation(this);
 		if(config.isConfigurationSection("PatternStation"))
 			mPatternStation.read(config.getConfigurationSection("PatternStation"));
-		
-		FlagIO.loadFlags(config.getConfigurationSection("flags"), mFlags);
 	}
 	
 	public void broadcast(String message, MinigamePlayer except)
@@ -427,7 +287,7 @@ public class GameBoard implements Flaggable
 			@Override
 			public void run()
 			{
-				if(mMode.getValue() == GameMode.Elimination)
+				if(mModule.getMode() == GameMode.Elimination)
 				{
 					Minigame minigame = getMinigame();
 					for(MinigamePlayer player : minigame.getPlayers())
@@ -482,7 +342,7 @@ public class GameBoard implements Flaggable
 	
 	public State<GameBoard> getMainState()
 	{
-		switch(mMode.getValue())
+		switch(mModule.getMode())
 		{
 		default:
 		case Elimination:

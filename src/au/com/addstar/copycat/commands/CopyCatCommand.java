@@ -8,12 +8,9 @@ public class CopyCatCommand extends RootCommandDispatcher
 	{
 		super("");
 		
-		registerCommand(new CreateCommand());
 		registerCommand(new SetStationCommand());
 		registerCommand(new SetupCommand());
-		registerCommand(new SetCommand());
 		registerCommand(new SetPatternStationCommand());
-		registerCommand(new DeleteCommand());
 		registerCommand(new EditorCommand());
 	}
 }

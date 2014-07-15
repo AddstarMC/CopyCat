@@ -7,7 +7,7 @@ public class WaitState extends TimerState
 	@Override
 	public void onStart( StateEngine<GameBoard> engine, GameBoard game )
 	{
-		endTime = System.currentTimeMillis() + game.getWaitTime();
+		endTime = System.currentTimeMillis() + game.getModule().getWaitTime();
 		game.getBossDisplay().setText("Selecting Pattern");
 	}
 	

@@ -71,8 +71,8 @@ public class ScoringMainState extends MainState
 			if(game.getSubject().matches(station.getPlayLocation(), station.getFacing()))
 			{
 				station.setCanModify(false);
-				game.getWorld().playSound(player.getPlayer().getLocation(), Sound.LEVEL_UP, 1.6f, 10);
-				MonoWorld.getWorld(game.getWorld()).playParticleEffect(player.getPlayer().getLocation(), ParticleEffect.VILLAGER_HAPPY, 0, 10, new Vector(1, 1, 1));
+				player.getPlayer().getWorld().playSound(player.getPlayer().getLocation(), Sound.LEVEL_UP, 1.6f, 10);
+				MonoWorld.getWorld(player.getPlayer().getWorld()).playParticleEffect(player.getPlayer().getLocation(), ParticleEffect.VILLAGER_HAPPY, 0, 10, new Vector(1, 1, 1));
 				
 				game.broadcast(player.getDisplayName() + " has completed the pattern!", null);
 				game.getBossDisplay().setText(player.getDisplayName() + " Finished");

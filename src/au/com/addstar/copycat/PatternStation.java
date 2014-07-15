@@ -1,6 +1,7 @@
 package au.com.addstar.copycat;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -133,6 +134,7 @@ public class PatternStation
 		if(isValid())
 		{
 			section.set("Location", mLocation.toVector());
+			section.set("World", mLocation.getWorld().getName());
 			section.set("Facing", mFacing.name());
 		}
 	}
@@ -141,7 +143,9 @@ public class PatternStation
 	{
 		if(section.contains("Location") && section.contains("Facing"))
 		{
-			mLocation = ((Vector)section.get("Location")).toLocation(mBoard.getWorld());
+			Vector vec = (Vector)section.get("Location");
+			World world = Bukkit.getWorld(section.getString("World"));
+			mLocation = vec.toLocation(world);
 			mFacing = BlockFace.valueOf(section.getString("Facing"));
 		}
 		else

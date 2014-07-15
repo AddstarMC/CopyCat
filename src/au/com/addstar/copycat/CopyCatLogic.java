@@ -21,6 +21,22 @@ import au.com.mineauz.minigames.minigame.MinigameModule;
 
 public class CopyCatLogic extends GameMechanicBase
 {
+	public CopyCatLogic()
+	{
+	}
+	
+	private GameBoard getBoard(Minigame minigame)
+	{
+		CopyCatModule module = CopyCatModule.getMinigameModule(minigame);
+		
+		if(module == null)
+			return null;
+		
+		if(minigame.getMechanic().equals(this))
+			return module.getGameBoard();
+		return null;
+	}
+	
 	@Override
 	public void balanceTeam( List<MinigamePlayer> players, Minigame minigame )
 	{
@@ -35,7 +51,7 @@ public class CopyCatLogic extends GameMechanicBase
 	@EventHandler
 	public void onMinigameStart(StartMinigameEvent event)
 	{
-		GameBoard board = CopyCatPlugin.instance.getBoardByGame(event.getMinigame().getName(false));
+		GameBoard board = getBoard(event.getMinigame());
 		if(board != null)
 			board.beginGame();
 	}
@@ -43,7 +59,7 @@ public class CopyCatLogic extends GameMechanicBase
 	@EventHandler
 	public void onMinigameEnd(EndMinigameEvent event)
 	{
-		GameBoard board = CopyCatPlugin.instance.getBoardByGame(event.getMinigame().getName(false));
+		GameBoard board = getBoard(event.getMinigame());
 		if(board != null)
 		{
 			for(MinigamePlayer player : event.getWinners())
@@ -56,7 +72,7 @@ public class CopyCatLogic extends GameMechanicBase
 		if(player == null || !player.isInMinigame())
 			return null;
 			
-		return CopyCatPlugin.instance.getBoardByGame(player.getMinigame().getName(false));
+		return getBoard(player.getMinigame());
 	}
 	
 	@EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
@@ -90,7 +106,7 @@ public class CopyCatLogic extends GameMechanicBase
 	@Override
 	public boolean checkCanStart( Minigame minigame, MinigamePlayer player )
 	{
-		GameBoard board = CopyCatPlugin.instance.getBoardByGame(minigame.getName(false));
+		GameBoard board = getBoard(minigame);
 		
 		if(board == null)
 		{
@@ -107,6 +123,9 @@ public class CopyCatLogic extends GameMechanicBase
 			return false;
 		}
 		
+		if(minigame.getStartLocations().isEmpty())
+			minigame.addStartLocation(board.getStation(0).getSpawnLocation());
+		
 		return true;
 	}
 
@@ -119,7 +138,7 @@ public class CopyCatLogic extends GameMechanicBase
 	@Override
 	public void endMinigame( Minigame minigame, List<MinigamePlayer> winners, List<MinigamePlayer> losers )
 	{
-		GameBoard board = CopyCatPlugin.instance.getBoardByGame(minigame.getName(false));
+		GameBoard board = getBoard(minigame);
 		if(board != null)
 		{
 			for(MinigamePlayer player : winners)
@@ -130,7 +149,7 @@ public class CopyCatLogic extends GameMechanicBase
 	@Override
 	public void joinMinigame( Minigame minigame, MinigamePlayer player )
 	{
-		GameBoard board = CopyCatPlugin.instance.getBoardByGame(minigame.getName(false));
+		GameBoard board = getBoard(minigame);
 		if(player.isInMinigame())
 			MonoPlayer.getPlayer(player.getPlayer()).setBossBarDisplay(board.getBossDisplay());
 	}
@@ -138,7 +157,7 @@ public class CopyCatLogic extends GameMechanicBase
 	@Override
 	public void quitMinigame( Minigame minigame, MinigamePlayer player, boolean forced )
 	{
-		GameBoard board = CopyCatPlugin.instance.getBoardByGame(minigame.getName(false));
+		GameBoard board = getBoard(minigame);
 		if(board != null)
 		{
 			if(!forced)

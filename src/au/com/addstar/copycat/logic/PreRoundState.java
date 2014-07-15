@@ -22,12 +22,12 @@ public class PreRoundState extends State<GameBoard>
 		{
 			game.getBossDisplay().setText("Waiting");
 			game.getBossDisplay().setPercent(1);
-			if(game.getAllowSubjectDrawing())
+			if(game.getModule().getAllowSubjectDraw())
 				engine.setState(new SubjectDrawState());
 			else
 			{
 				game.setSubject(CopyCatPlugin.instance.getSubjectStorage().getRandomSubject(game.getSubjectSize()));
-				game.broadcast("Selecting random pattern. Round starts in " + Util.getTimeRemainString(game.getWaitTime()), null);
+				game.broadcast("Selecting random pattern. Round starts in " + Util.getTimeRemainString(game.getModule().getWaitTime()), null);
 				engine.setState(new WaitState());
 			}
 		}

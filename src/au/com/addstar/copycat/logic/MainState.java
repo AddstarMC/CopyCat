@@ -33,7 +33,7 @@ public abstract class MainState extends TimerState
 		for(MinigamePlayer player : minigame.getPlayers())
 			defaultLoadout.equiptLoadout(player);
 		
-		endTime = System.currentTimeMillis() + game.getMaxRoundTime();
+		endTime = System.currentTimeMillis() + game.getModule().getMaxRoundTime();
 		game.getBossDisplay().setText("Start Copying");
 		game.getBossDisplay().setPercent(0);
 		lastMessageTime = System.currentTimeMillis();

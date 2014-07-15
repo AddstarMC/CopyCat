@@ -1,5 +1,6 @@
 package au.com.addstar.copycat.commands;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -9,13 +10,15 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import au.com.addstar.copycat.CopyCatPlugin;
+import au.com.addstar.copycat.CopyCatModule;
 import au.com.addstar.copycat.GameBoard;
 import au.com.addstar.copycat.PlayerStation;
 import au.com.addstar.copycat.Util;
 import au.com.addstar.monolith.command.BadArgumentException;
 import au.com.addstar.monolith.command.CommandSenderType;
 import au.com.addstar.monolith.command.ICommand;
+import au.com.mineauz.minigames.Minigames;
+import au.com.mineauz.minigames.minigame.Minigame;
 
 public class SetStationCommand implements ICommand
 {
@@ -41,7 +44,7 @@ public class SetStationCommand implements ICommand
 	@Override
 	public String getUsageString( String label, CommandSender sender )
 	{
-		return label + " <board> <number> [show]";
+		return label + " <minigame> <number> [show]";
 	}
 
 	@Override
@@ -68,9 +71,19 @@ public class SetStationCommand implements ICommand
 		
 		String name = args[0];
 		
-		GameBoard board = CopyCatPlugin.instance.getBoard(name, loc.getWorld());
+		Minigame minigame = Minigames.plugin.mdata.getMinigame(args[0]);
+		if(minigame == null)
+			throw new BadArgumentException(1, "Unknown minigame " + args[0]);
+		
+		CopyCatModule module = CopyCatModule.getMinigameModule(minigame);
+		
+		if(!minigame.getMechanicName().equals("CopyCat") || module == null)
+			throw new BadArgumentException(1, "Minigame is not a copycat game");
+		
+		GameBoard board = module.getGameBoard();
+		
 		if(board == null)
-			throw new BadArgumentException(0, "Unknown game board " + name + " in " + loc.getWorld().getName());
+			throw new BadArgumentException(0, "Minigame has not been setup to be a copycat game. Please user /copycat setup <minigame> <maxplayers> <patternsize>");
 		
 		int number = 1;
 		
@@ -91,7 +104,8 @@ public class SetStationCommand implements ICommand
 			station.displayLocations((Player)sender);
 		
 		sender.sendMessage(ChatColor.GREEN + "Station " + number + " was sucessfully set for " + name);
-		CopyCatPlugin.instance.saveBoard(name, loc.getWorld());
+		
+		minigame.saveMinigame();
 		
 		return true;
 	}
@@ -100,7 +114,17 @@ public class SetStationCommand implements ICommand
 	public List<String> onTabComplete( CommandSender sender, String parent, String label, String[] args )
 	{
 		if(args.length == 1)
-			return CopyCatPlugin.instance.matchBoard(args[0], ((Player)sender).getWorld());
+		{
+			ArrayList<String> matches = new ArrayList<String>();
+			String toMatch = args[0].toLowerCase();
+			for(String name : Minigames.plugin.mdata.getAllMinigames().keySet())
+			{
+				if(name.toLowerCase().startsWith(toMatch))
+					matches.add(name);
+			}
+			
+			return matches;
+		}
 		return null;
 	}
 
