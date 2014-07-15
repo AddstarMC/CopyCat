@@ -8,9 +8,10 @@ import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 
-import com.pauldavdesign.mineauz.minigames.MinigamePlayer;
-import com.pauldavdesign.mineauz.minigames.minigame.Minigame;
-
+import au.com.mineauz.minigames.MinigamePlayer;
+import au.com.mineauz.minigames.PlayerLoadout;
+import au.com.mineauz.minigames.minigame.Minigame;
+import au.com.mineauz.minigames.minigame.modules.LoadoutModule;
 import au.com.addstar.copycat.CopyCatPlugin;
 import au.com.addstar.copycat.GameBoard;
 import au.com.addstar.copycat.PatternStation;
@@ -41,7 +42,10 @@ public class SubjectDrawState extends TimerState
 		player.teleport(station.getSpawnLocation());
 		station.setPlayer(player);
 		player.sendMessage("Draw the pattern in the area in front of you. You have " + Util.getTimeRemainString(game.getSubjectDrawTime()) + ". If you do not fill every block, a random pattern will be used.", "win");
-		minigame.getDefaultPlayerLoadout().equiptLoadout(player);
+		
+		LoadoutModule module = LoadoutModule.getMinigameModule(minigame);
+		PlayerLoadout defaultLoadout = module.getLoadout("default");
+		defaultLoadout.equiptLoadout(player);
 		
 		endTime = System.currentTimeMillis() + game.getSubjectDrawTime();
 		

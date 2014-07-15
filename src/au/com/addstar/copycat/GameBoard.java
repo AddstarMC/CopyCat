@@ -29,9 +29,9 @@ import au.com.addstar.monolith.flag.Flaggable;
 import au.com.addstar.monolith.flag.IntegerFlag;
 import au.com.addstar.monolith.flag.StringFlag;
 
-import com.pauldavdesign.mineauz.minigames.MinigamePlayer;
-import com.pauldavdesign.mineauz.minigames.Minigames;
-import com.pauldavdesign.mineauz.minigames.minigame.Minigame;
+import au.com.mineauz.minigames.MinigamePlayer;
+import au.com.mineauz.minigames.Minigames;
+import au.com.mineauz.minigames.minigame.Minigame;
 
 public class GameBoard implements Flaggable
 {

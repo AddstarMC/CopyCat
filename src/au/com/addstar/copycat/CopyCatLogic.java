@@ -1,8 +1,8 @@
 package au.com.addstar.copycat;
 
+import java.util.EnumSet;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -10,58 +10,26 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 import au.com.addstar.monolith.MonoPlayer;
+import au.com.mineauz.minigames.MinigamePlayer;
+import au.com.mineauz.minigames.Minigames;
+import au.com.mineauz.minigames.events.EndMinigameEvent;
+import au.com.mineauz.minigames.events.StartMinigameEvent;
+import au.com.mineauz.minigames.gametypes.MinigameType;
+import au.com.mineauz.minigames.mechanics.GameMechanicBase;
+import au.com.mineauz.minigames.minigame.Minigame;
+import au.com.mineauz.minigames.minigame.MinigameModule;
 
-import com.pauldavdesign.mineauz.minigames.MinigamePlayer;
-import com.pauldavdesign.mineauz.minigames.Minigames;
-import com.pauldavdesign.mineauz.minigames.events.EndMinigameEvent;
-import com.pauldavdesign.mineauz.minigames.events.JoinMinigameEvent;
-import com.pauldavdesign.mineauz.minigames.events.QuitMinigameEvent;
-import com.pauldavdesign.mineauz.minigames.events.StartMinigameEvent;
-import com.pauldavdesign.mineauz.minigames.minigame.Minigame;
-import com.pauldavdesign.mineauz.minigames.scoring.ScoreTypeBase;
-
-public class CopyCatLogic extends ScoreTypeBase
+public class CopyCatLogic extends GameMechanicBase
 {
 	@Override
 	public void balanceTeam( List<MinigamePlayer> players, Minigame minigame )
 	{
-		System.out.println("Balancing team");
 	}
 
 	@Override
-	public String getType()
+	public String getMechanic()
 	{
 		return "CopyCat";
-	}
-	
-	@EventHandler
-	public void onMinigameJoin(final JoinMinigameEvent event)
-	{
-		if(event.isCancelled())
-			return;
-		
-		final GameBoard board = CopyCatPlugin.instance.getBoardByGame(event.getMinigame().getName(false));
-		if(board != null)
-		{
-			List<String> errors = board.getErrors();
-			if(!errors.isEmpty())
-			{
-				for(String error : errors)
-					event.getPlayer().sendMessage(ChatColor.RED + error);
-
-				event.setCancelled(true);
-			}
-			
-			Bukkit.getScheduler().runTask(CopyCatPlugin.instance, new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					if(event.getMinigamePlayer().isInMinigame())
-						MonoPlayer.getPlayer(event.getPlayer()).setBossBarDisplay(board.getBossDisplay());
-				}
-			});
-		}
 	}
 	
 	@EventHandler
@@ -70,19 +38,6 @@ public class CopyCatLogic extends ScoreTypeBase
 		GameBoard board = CopyCatPlugin.instance.getBoardByGame(event.getMinigame().getName(false));
 		if(board != null)
 			board.beginGame();
-	}
-	
-	@EventHandler
-	public void onMinigameQuit(QuitMinigameEvent event)
-	{
-		GameBoard board = CopyCatPlugin.instance.getBoardByGame(event.getMinigame().getName(false));
-		if(board != null)
-		{
-			if(!event.isForced())
-				board.onPlayerLeave(event.getMinigamePlayer());
-			
-			MonoPlayer.getPlayer(event.getPlayer()).setBossBarDisplay(null);
-		}
 	}
 	
 	@EventHandler
@@ -130,5 +85,84 @@ public class CopyCatLogic extends ScoreTypeBase
 			if(!board.canModify(player, event.getBlock().getLocation()))
 				event.setCancelled(true);
 		}
+	}
+
+	@Override
+	public boolean checkCanStart( Minigame minigame, MinigamePlayer player )
+	{
+		GameBoard board = CopyCatPlugin.instance.getBoardByGame(minigame.getName(false));
+		
+		if(board == null)
+		{
+			player.sendMessage(ChatColor.RED + "No CopyCat board is linked with this minigame");
+			return false;
+		}
+		
+		List<String> errors = board.getErrors();
+		if(!errors.isEmpty())
+		{
+			for(String error : errors)
+				player.sendMessage(ChatColor.RED + error);
+
+			return false;
+		}
+		
+		return true;
+	}
+
+	@Override
+	public MinigameModule displaySettings( Minigame minigame )
+	{
+		return null;
+	}
+
+	@Override
+	public void endMinigame( Minigame minigame, List<MinigamePlayer> winners, List<MinigamePlayer> losers )
+	{
+		GameBoard board = CopyCatPlugin.instance.getBoardByGame(minigame.getName(false));
+		if(board != null)
+		{
+			for(MinigamePlayer player : winners)
+				MonoPlayer.getPlayer(player.getPlayer()).setBossBarDisplay(null);
+		}
+	}
+
+	@Override
+	public void joinMinigame( Minigame minigame, MinigamePlayer player )
+	{
+		GameBoard board = CopyCatPlugin.instance.getBoardByGame(minigame.getName(false));
+		if(player.isInMinigame())
+			MonoPlayer.getPlayer(player.getPlayer()).setBossBarDisplay(board.getBossDisplay());
+	}
+
+	@Override
+	public void quitMinigame( Minigame minigame, MinigamePlayer player, boolean forced )
+	{
+		GameBoard board = CopyCatPlugin.instance.getBoardByGame(minigame.getName(false));
+		if(board != null)
+		{
+			if(!forced)
+				board.onPlayerLeave(player);
+			
+			MonoPlayer.getPlayer(player.getPlayer()).setBossBarDisplay(null);
+		}
+	}
+
+	@Override
+	public void startMinigame( Minigame minigame, MinigamePlayer player )
+	{
+		// Only for global type
+	}
+
+	@Override
+	public void stopMinigame( Minigame minigame, MinigamePlayer player )
+	{
+		// Only for global type
+	}
+
+	@Override
+	public EnumSet<MinigameType> validTypes()
+	{
+		return EnumSet.of(MinigameType.MULTIPLAYER);
 	}
 }

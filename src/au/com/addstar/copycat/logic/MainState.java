@@ -1,8 +1,9 @@
 package au.com.addstar.copycat.logic;
 
-import com.pauldavdesign.mineauz.minigames.MinigamePlayer;
-import com.pauldavdesign.mineauz.minigames.minigame.Minigame;
-
+import au.com.mineauz.minigames.MinigamePlayer;
+import au.com.mineauz.minigames.PlayerLoadout;
+import au.com.mineauz.minigames.minigame.Minigame;
+import au.com.mineauz.minigames.minigame.modules.LoadoutModule;
 import au.com.addstar.copycat.GameBoard;
 import au.com.addstar.copycat.PlayerStation;
 import au.com.addstar.copycat.Util;
@@ -26,8 +27,11 @@ public abstract class MainState extends TimerState
 			}
 		}
 		
+		LoadoutModule module = LoadoutModule.getMinigameModule(minigame);
+		PlayerLoadout defaultLoadout = module.getLoadout("default");
+		
 		for(MinigamePlayer player : minigame.getPlayers())
-			minigame.getDefaultPlayerLoadout().equiptLoadout(player);
+			defaultLoadout.equiptLoadout(player);
 		
 		endTime = System.currentTimeMillis() + game.getMaxRoundTime();
 		game.getBossDisplay().setText("Start Copying");

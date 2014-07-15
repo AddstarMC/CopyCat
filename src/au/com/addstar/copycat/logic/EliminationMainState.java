@@ -5,9 +5,9 @@ import java.util.HashSet;
 import org.bukkit.Sound;
 import org.bukkit.util.Vector;
 
-import com.pauldavdesign.mineauz.minigames.MinigamePlayer;
-import com.pauldavdesign.mineauz.minigames.Minigames;
-import com.pauldavdesign.mineauz.minigames.minigame.Minigame;
+import au.com.mineauz.minigames.MinigamePlayer;
+import au.com.mineauz.minigames.Minigames;
+import au.com.mineauz.minigames.minigame.Minigame;
 
 import au.com.addstar.copycat.GameBoard;
 import au.com.addstar.copycat.PlayerStation;

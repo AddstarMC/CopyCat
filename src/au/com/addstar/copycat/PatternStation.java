@@ -10,7 +10,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.pauldavdesign.mineauz.minigames.MinigamePlayer;
+import au.com.mineauz.minigames.MinigamePlayer;
 
 public class PatternStation
 {

@@ -21,11 +21,13 @@ import au.com.addstar.copycat.commands.CopyCatCommand;
 
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
-import com.pauldavdesign.mineauz.minigames.Minigames;
-import com.pauldavdesign.mineauz.minigames.PlayerLoadout;
-import com.pauldavdesign.mineauz.minigames.gametypes.MinigameType;
-import com.pauldavdesign.mineauz.minigames.minigame.Minigame;
-import com.pauldavdesign.mineauz.minigames.scoring.ScoreType;
+
+import au.com.mineauz.minigames.PlayerLoadout;
+import au.com.mineauz.minigames.gametypes.MinigameType;
+import au.com.mineauz.minigames.mechanics.GameMechanics;
+import au.com.mineauz.minigames.minigame.Minigame;
+import au.com.mineauz.minigames.minigame.modules.LoadoutModule;
+import au.com.mineauz.minigames.minigame.modules.LobbySettingsModule;
 
 public class CopyCatPlugin extends JavaPlugin
 {
@@ -64,8 +66,7 @@ public class CopyCatPlugin extends JavaPlugin
 		
 		new CopyCatCommand().registerAs(getCommand("copycat"));
 		
-		ScoreType.addScoreType(new CopyCatLogic());
-		Minigames.plugin.mdata.addPreset(new CopyCatPreset());
+		GameMechanics.addGameMechanic(new CopyCatLogic());
 		
 		for(World world : Bukkit.getWorlds())
 			loadWorld(world);
@@ -240,11 +241,12 @@ public class CopyCatPlugin extends JavaPlugin
 	
 	public static void applyDefaults(Minigame minigame)
 	{
-		minigame.setScoreType("copycat");
+		minigame.setMechanic("CopyCat");
 		minigame.setBlocksdrop(true);
 		minigame.setCanBlockBreak(true);
 		minigame.setCanBlockPlace(true);
-		PlayerLoadout loadout = minigame.getDefaultPlayerLoadout();
+		LoadoutModule module = LoadoutModule.getMinigameModule(minigame);
+		PlayerLoadout loadout = module.getLoadout("default");
 		loadout.clearLoadout();
 		loadout.addItem(new ItemStack(Material.DIAMOND_PICKAXE), 0);
 		for(int i = 0; i < blockTypes.size(); ++i)
@@ -253,8 +255,8 @@ public class CopyCatPlugin extends JavaPlugin
 		minigame.setDefaultGamemode(GameMode.SURVIVAL);
 		minigame.setGametypeName("Copy Cat");
 		minigame.setObjective("Copy the shown pattern");
-		minigame.setTeleportOnStart(false);
-		minigame.setType(MinigameType.FREE_FOR_ALL);
+		LobbySettingsModule.getMinigameModule(minigame).setTeleportOnStart(false);
+		minigame.setType(MinigameType.MULTIPLAYER);
 		minigame.setLives(3);
 	}
 	

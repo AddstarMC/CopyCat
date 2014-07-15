@@ -8,7 +8,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.pauldavdesign.mineauz.minigames.Minigames;
+import au.com.mineauz.minigames.Minigames;
 
 import au.com.addstar.copycat.CopyCatPlugin;
 import au.com.addstar.copycat.GameBoard;
