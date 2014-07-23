@@ -68,6 +68,8 @@ public class CopyCatPlugin extends JavaPlugin
 	@Override
 	public void onDisable()
 	{
+		GameMechanics.removeGameMechanic("CopyCat");
+		Minigames.plugin.mdata.removeModule("CopyCat", CopyCatModule.class);
 	}
 	
 	public static void applyDefaultsForGame(GameBoard board)
