@@ -16,6 +16,7 @@ import au.com.addstar.copycat.commands.CopyCatCommand;
 
 import com.google.common.collect.ImmutableList;
 
+import au.com.mineauz.minigames.Minigames;
 import au.com.mineauz.minigames.PlayerLoadout;
 import au.com.mineauz.minigames.gametypes.MinigameType;
 import au.com.mineauz.minigames.mechanics.GameMechanics;
@@ -59,6 +60,7 @@ public class CopyCatPlugin extends JavaPlugin
 		new CopyCatCommand().registerAs(getCommand("copycat"));
 		
 		GameMechanics.addGameMechanic(new CopyCatLogic());
+		Minigames.plugin.mdata.addModule(CopyCatModule.class);
 		
 		Bukkit.getPluginManager().registerEvents(new EventListener(), this);
 	}

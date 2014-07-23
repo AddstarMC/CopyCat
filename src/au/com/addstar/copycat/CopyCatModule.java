@@ -1,8 +1,11 @@
 package au.com.addstar.copycat;
 
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import au.com.addstar.copycat.GameBoard.GameMode;
@@ -10,7 +13,10 @@ import au.com.mineauz.minigames.config.BooleanFlag;
 import au.com.mineauz.minigames.config.EnumFlag;
 import au.com.mineauz.minigames.config.Flag;
 import au.com.mineauz.minigames.config.IntegerFlag;
+import au.com.mineauz.minigames.menu.Callback;
 import au.com.mineauz.minigames.menu.Menu;
+import au.com.mineauz.minigames.menu.MenuItemNewLine;
+import au.com.mineauz.minigames.menu.MenuItemPage;
 import au.com.mineauz.minigames.minigame.Minigame;
 import au.com.mineauz.minigames.minigame.MinigameModule;
 
@@ -58,7 +64,17 @@ public class CopyCatModule extends MinigameModule
 	@Override
 	public Map<String, Flag<?>> getFlags()
 	{
-		return Collections.emptyMap();
+		HashMap<String, Flag<?>> flags = new HashMap<String, Flag<?>>();
+		flags.put(mSubjectDrawTime.getName(), mSubjectDrawTime);
+		flags.put(mAllowSubjectDraw.getName(), mAllowSubjectDraw);
+		flags.put(mWaitTime.getName(), mWaitTime);
+		flags.put(mSaveSubjects.getName(), mSaveSubjects);
+		flags.put(mMode.getName(), mMode);
+		flags.put(mMaxRoundTime.getName(), mMaxRoundTime);
+		flags.put(mBackBoardDistance.getName(), mBackBoardDistance);
+		flags.put(mBackBoardHeight.getName(), mBackBoardHeight);
+		
+		return flags;
 	}
 
 	@Override
@@ -70,15 +86,6 @@ public class CopyCatModule extends MinigameModule
 	@Override
 	public void save( FileConfiguration config )
 	{
-		mSubjectDrawTime.saveValue("copycat", config);
-		mAllowSubjectDraw.saveValue("copycat", config);
-		mWaitTime.saveValue("copycat", config);
-		mSaveSubjects.saveValue("copycat", config);
-		mMode.saveValue("copycat", config);
-		mMaxRoundTime.saveValue("copycat", config);
-		mBackBoardDistance.saveValue("copycat", config);
-		mBackBoardHeight.saveValue("copycat", config);
-		
 		if(mBoard != null)
 			mBoard.write(config.createSection("board"));
 	}
@@ -86,15 +93,6 @@ public class CopyCatModule extends MinigameModule
 	@Override
 	public void load( FileConfiguration config )
 	{
-		mSubjectDrawTime.loadValue("copycat", config);
-		mAllowSubjectDraw.loadValue("copycat", config);
-		mWaitTime.loadValue("copycat", config);
-		mSaveSubjects.loadValue("copycat", config);
-		mMode.loadValue("copycat", config);
-		mMaxRoundTime.loadValue("copycat", config);
-		mBackBoardDistance.loadValue("copycat", config);
-		mBackBoardHeight.loadValue("copycat", config);
-		
 		if(config.isConfigurationSection("board"))
 			mBoard = new GameBoard(config.getConfigurationSection("board"));
 		else
@@ -109,7 +107,42 @@ public class CopyCatModule extends MinigameModule
 	@Override
 	public boolean getMenuOptions( Menu previous )
 	{
-		return false;
+		Menu menu = new Menu(6, getMinigame().getName(false), previous.getViewer());
+		menu.addItem(mWaitTime.getMenuItem("Wait Time", Material.WATCH, Arrays.asList("The time in between rounds in seconds.")));
+		menu.addItem(mMaxRoundTime.getMenuItem("Max Round Time", Material.WATCH, Arrays.asList("The maximum amount of time one round","can run for")));
+		menu.addItem(getMenuItem("Mode", Material.PAPER, mMode, GameMode.class, Arrays.asList("The CopyCat game mode to use for","this minigame.")));
+		menu.addItem(new MenuItemNewLine());
+		menu.addItem(mAllowSubjectDraw.getMenuItem("Allow Pattern Draw", Material.LEVER, Arrays.asList("When true, before the round starts,","a player will be selected to draw the pattern","for the others")));
+		menu.addItem(mSubjectDrawTime.getMenuItem("Pattern Draw Time", Material.WATCH, Arrays.asList("The time allowed for drawing the pattern")));
+		menu.addItem(mSaveSubjects.getMenuItem("Save Patterns", Material.REDSTONE_TORCH_ON, Arrays.asList("When true, patterns created by players","during pattern drawing time will be","saved and used during random pattern loading")));
+		menu.addItem(new MenuItemNewLine());
+		menu.addItem(mBackBoardDistance.getMenuItem("Backboard Distance", Material.IRON_BOOTS, Arrays.asList("The distance from the end of the ","play area where the backboard will be located.")));
+		menu.addItem(mBackBoardHeight.getMenuItem("Backboard Height", Material.FEATHER, Arrays.asList("The height offset for the backboard")));
+		
+		menu.addItem(new MenuItemPage("Back", Material.REDSTONE_TORCH_ON, previous), menu.getSize() - 9);
+		menu.displayMenu(previous.getViewer());
+		
+		return true;
+	}
+	
+	private <T extends Enum<T>> MenuItemEnum<T> getMenuItem(String name, Material material, final EnumFlag<T> flag, Class<T> enumClass, List<String> description)
+	{
+		MenuItemEnum<T> item = new MenuItemEnum<T>(enumClass, name, description, new Callback<T>()
+		{
+			@Override
+			public void setValue( T value )
+			{
+				flag.setFlag(value);
+			}
+
+			@Override
+			public T getValue()
+			{
+				return flag.getFlag();
+			}
+		}, material);
+		
+		return item;
 	}
 	
 	public int getSubjectDrawTime()

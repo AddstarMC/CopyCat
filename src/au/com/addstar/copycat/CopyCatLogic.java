@@ -132,7 +132,7 @@ public class CopyCatLogic extends GameMechanicBase
 	@Override
 	public MinigameModule displaySettings( Minigame minigame )
 	{
-		return null;
+		return CopyCatModule.getMinigameModule(minigame);
 	}
 
 	@Override
