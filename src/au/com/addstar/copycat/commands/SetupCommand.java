@@ -68,24 +68,24 @@ public class SetupCommand implements ICommand
 		
 		try
 		{
-			players = Integer.parseInt(args[2]);
+			players = Integer.parseInt(args[1]);
 			if(players < 2)
-				throw new BadArgumentException(2, "You need at least 2 players");
+				throw new BadArgumentException(1, "You need at least 2 players");
 		}
 		catch(NumberFormatException e)
 		{
-			throw new BadArgumentException(2, "Expected player count.");
+			throw new BadArgumentException(1, "Expected player count.");
 		}
 		
 		try
 		{
-			size = Integer.parseInt(args[3]);
+			size = Integer.parseInt(args[2]);
 			if(size < 4)
-				throw new BadArgumentException(3, "Size should be at least 4");
+				throw new BadArgumentException(2, "Size should be at least 4");
 		}
 		catch(NumberFormatException e)
 		{
-			throw new BadArgumentException(3, "Expected board size. 8 is the normal size.");
+			throw new BadArgumentException(2, "Expected board size. 8 is the normal size.");
 		}
 		
 		CopyCatModule module = CopyCatModule.getMinigameModule(minigame);
@@ -100,6 +100,7 @@ public class SetupCommand implements ICommand
 		{
 			board = new GameBoard(players, size);
 			board.initialize(CopyCatModule.getMinigameModule(minigame));
+			module.setGameBoard(board);
 		}
 		else
 		{
