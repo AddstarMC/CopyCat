@@ -18,7 +18,7 @@ import au.com.mineauz.minigames.menu.Menu;
 import au.com.mineauz.minigames.menu.MenuItemNewLine;
 import au.com.mineauz.minigames.menu.MenuItemPage;
 import au.com.mineauz.minigames.minigame.Minigame;
-import au.com.mineauz.minigames.minigame.MinigameModule;
+import au.com.mineauz.minigames.minigame.modules.MinigameModule;
 
 public class CopyCatModule extends MinigameModule
 {
@@ -100,12 +100,12 @@ public class CopyCatModule extends MinigameModule
 	}
 
 	@Override
-	public void addMenuOptions( Menu menu )
+	public void addEditMenuOptions( Menu menu )
 	{
 	}
 
 	@Override
-	public boolean getMenuOptions( Menu previous )
+	public boolean displayMechanicSettings( Menu previous )
 	{
 		Menu menu = new Menu(6, getMinigame().getName(false), previous.getViewer());
 		menu.addItem(mWaitTime.getMenuItem("Wait Time", Material.WATCH, Arrays.asList("The time in between rounds in seconds.")));
