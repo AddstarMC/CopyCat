@@ -3,6 +3,9 @@ package au.com.addstar.copycat.logic;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BossBar;
+
 import au.com.mineauz.minigames.MinigamePlayer;
 import au.com.mineauz.minigames.Minigames;
 import au.com.mineauz.minigames.minigame.Minigame;
@@ -20,8 +23,11 @@ public class PreRoundState extends State<GameBoard>
 		// More players to eliminate.
 		if(minigame.getPlayers().size() > 1)
 		{
-			game.getBossDisplay().setText("Waiting");
-			game.getBossDisplay().setPercent(1);
+			BossBar bar = game.getBossDisplay();
+			bar.setTitle("Waiting");
+			bar.setProgress(1);
+			bar.setColor(BarColor.PURPLE);
+
 			if(game.getModule().getAllowSubjectDraw())
 				engine.setState(new SubjectDrawState());
 			else

@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.scoreboard.Objective;
 
@@ -14,7 +17,6 @@ import au.com.addstar.copycat.logic.PreRoundState;
 import au.com.addstar.copycat.logic.ScoringMainState;
 import au.com.addstar.copycat.logic.State;
 import au.com.addstar.copycat.logic.StateEngine;
-import au.com.addstar.monolith.BossDisplay;
 import au.com.mineauz.minigames.MinigamePlayer;
 import au.com.mineauz.minigames.Minigames;
 import au.com.mineauz.minigames.minigame.Minigame;
@@ -40,13 +42,14 @@ public class GameBoard
 	
 	private MinigamePlayer mSubjectDrawer;
 	private StateEngine<GameBoard> mEngine = new StateEngine<GameBoard>();
-	private BossDisplay mBossDisplay;
+	private BossBar mBossDisplay;
 	
 	private EditSession mEditSession;
 	
 	private GameBoard()
 	{
-		mBossDisplay = new BossDisplay("Waiting for players", 1);
+		mBossDisplay = Bukkit.createBossBar("Waiting for players", BarColor.PURPLE, BarStyle.SOLID);
+		mBossDisplay.setProgress(1);
 	}
 	
 	public GameBoard(int players, int size)
@@ -195,7 +198,7 @@ public class GameBoard
 		return mPatternStation;
 	}
 	
-	public BossDisplay getBossDisplay()
+	public BossBar getBossDisplay()
 	{
 		return mBossDisplay;
 	}
@@ -336,8 +339,10 @@ public class GameBoard
 			station.setPlayer(null);
 		}
 		
-		mBossDisplay.setText("Waiting for players");
-		mBossDisplay.setPercent(1);
+		mBossDisplay.setTitle("Waiting for players");
+		mBossDisplay.setStyle(BarStyle.SOLID);
+		mBossDisplay.setColor(BarColor.PURPLE);
+		mBossDisplay.setProgress(1);
 	}
 	
 	public State<GameBoard> getMainState()

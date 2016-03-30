@@ -2,8 +2,10 @@ package au.com.addstar.copycat.logic;
 
 import java.util.HashSet;
 
+import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.util.Vector;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BossBar;
 
 import au.com.mineauz.minigames.MinigamePlayer;
 import au.com.mineauz.minigames.Minigames;
@@ -11,8 +13,6 @@ import au.com.mineauz.minigames.minigame.Minigame;
 
 import au.com.addstar.copycat.GameBoard;
 import au.com.addstar.copycat.PlayerStation;
-import au.com.addstar.monolith.MonoWorld;
-import au.com.addstar.monolith.ParticleEffect;
 
 public class ScoringMainState extends MainState
 {
@@ -71,12 +71,15 @@ public class ScoringMainState extends MainState
 			if(game.getSubject().matches(station.getPlayLocation(), station.getFacing()))
 			{
 				station.setCanModify(false);
-				player.getPlayer().getWorld().playSound(player.getPlayer().getLocation(), Sound.LEVEL_UP, 1.6f, 10);
-				MonoWorld.getWorld(player.getPlayer().getWorld()).playParticleEffect(player.getPlayer().getLocation(), ParticleEffect.VILLAGER_HAPPY, 0, 10, new Vector(1, 1, 1));
+				player.getPlayer().getWorld().playSound(player.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.6f, 10);
+				player.getPlayer().getWorld().spawnParticle(Particle.VILLAGER_HAPPY, player.getPlayer().getLocation(), 10, 1, 1, 1, 0);
 				
 				game.broadcast(player.getDisplayName() + " has completed the pattern!", null);
-				game.getBossDisplay().setText(player.getDisplayName() + " Finished");
-				game.getBossDisplay().setPercent(1 - (mWaiting.size() / (float)game.getMinigame().getPlayers().size()));
+				BossBar bar = game.getBossDisplay();
+				bar.setTitle(player.getDisplayName() + " Finished");
+				bar.setColor(BarColor.PURPLE);
+				bar.setProgress(1 - (mWaiting.size() / (float)game.getMinigame().getPlayers().size()));
+				
 				lastMessageTime = System.currentTimeMillis();
 				
 				int points = 0;

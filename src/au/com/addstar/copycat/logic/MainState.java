@@ -4,17 +4,23 @@ import au.com.mineauz.minigames.MinigamePlayer;
 import au.com.mineauz.minigames.PlayerLoadout;
 import au.com.mineauz.minigames.minigame.Minigame;
 import au.com.mineauz.minigames.minigame.modules.LoadoutModule;
+
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BossBar;
+
 import au.com.addstar.copycat.GameBoard;
 import au.com.addstar.copycat.PlayerStation;
 import au.com.addstar.copycat.Util;
 
 public abstract class MainState extends TimerState
 {
+	protected long startTime;
 	protected long lastMessageTime = 0;
 	protected long lastTimeOutput = 0;
 	@Override
 	public void onStart( StateEngine<GameBoard> engine, GameBoard game )
 	{
+		startTime = System.currentTimeMillis();
 		Minigame minigame = game.getMinigame();
 		game.broadcast("Start copying", null);
 		
@@ -34,8 +40,10 @@ public abstract class MainState extends TimerState
 			defaultLoadout.equiptLoadout(player);
 		
 		endTime = System.currentTimeMillis() + game.getModule().getMaxRoundTime();
-		game.getBossDisplay().setText("Start Copying");
-		game.getBossDisplay().setPercent(0);
+		BossBar bar = game.getBossDisplay();
+		bar.setTitle("Start Copying");
+		bar.setColor(BarColor.GREEN);
+		bar.setProgress(0);
 		lastMessageTime = System.currentTimeMillis();
 	}
 	
@@ -66,7 +74,20 @@ public abstract class MainState extends TimerState
 		{
 			if(current - lastTimeOutput >= 1000)
 			{
-				game.getBossDisplay().setText("Time left: " + Util.getTimeRemainString(left));
+				double progress = (double)left / (double)(endTime - startTime);
+				progress = Math.min(Math.max(progress, 0), 1);
+				
+				BossBar bar = game.getBossDisplay();
+				bar.setTitle("Time left: " + Util.getTimeRemainString(left));
+				bar.setProgress(progress);
+				
+				if (progress > 0.3)
+					bar.setColor(BarColor.GREEN);
+				else if (progress > 0.1)
+					bar.setColor(BarColor.YELLOW);
+				else
+					bar.setColor(BarColor.RED);
+					
 				lastTimeOutput = current;
 			}
 		}

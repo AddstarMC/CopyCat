@@ -9,7 +9,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-import au.com.addstar.monolith.MonoPlayer;
 import au.com.mineauz.minigames.MinigamePlayer;
 import au.com.mineauz.minigames.Minigames;
 import au.com.mineauz.minigames.events.EndMinigameEvent;
@@ -63,7 +62,7 @@ public class CopyCatLogic extends GameMechanicBase
 		if(board != null)
 		{
 			for(MinigamePlayer player : event.getWinners())
-				MonoPlayer.getPlayer(player.getPlayer()).setBossBarDisplay(null);
+				board.getBossDisplay().removePlayer(player.getPlayer());
 		}
 	}
 
@@ -142,7 +141,7 @@ public class CopyCatLogic extends GameMechanicBase
 		if(board != null)
 		{
 			for(MinigamePlayer player : winners)
-				MonoPlayer.getPlayer(player.getPlayer()).setBossBarDisplay(null);
+				board.getBossDisplay().removePlayer(player.getPlayer());
 		}
 	}
 
@@ -151,7 +150,7 @@ public class CopyCatLogic extends GameMechanicBase
 	{
 		GameBoard board = getBoard(minigame);
 		if(player.isInMinigame())
-			MonoPlayer.getPlayer(player.getPlayer()).setBossBarDisplay(board.getBossDisplay());
+			board.getBossDisplay().addPlayer(player.getPlayer());
 	}
 
 	@Override
@@ -163,7 +162,7 @@ public class CopyCatLogic extends GameMechanicBase
 			if(!forced)
 				board.onPlayerLeave(player);
 			
-			MonoPlayer.getPlayer(player.getPlayer()).setBossBarDisplay(null);
+			board.getBossDisplay().removePlayer(player.getPlayer());
 		}
 	}
 

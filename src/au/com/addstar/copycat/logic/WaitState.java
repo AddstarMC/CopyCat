@@ -1,5 +1,8 @@
 package au.com.addstar.copycat.logic;
 
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BossBar;
+
 import au.com.addstar.copycat.GameBoard;
 
 public class WaitState extends TimerState
@@ -8,7 +11,10 @@ public class WaitState extends TimerState
 	public void onStart( StateEngine<GameBoard> engine, GameBoard game )
 	{
 		endTime = System.currentTimeMillis() + game.getModule().getWaitTime();
-		game.getBossDisplay().setText("Selecting Pattern");
+		BossBar bar = game.getBossDisplay();
+		bar.setTitle("Selecting Pattern");
+		bar.setProgress(0);
+		bar.setColor(BarColor.PURPLE);
 	}
 	
 	@Override

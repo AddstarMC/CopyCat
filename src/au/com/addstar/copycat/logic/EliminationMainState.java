@@ -2,8 +2,10 @@ package au.com.addstar.copycat.logic;
 
 import java.util.HashSet;
 
+import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.util.Vector;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BossBar;
 
 import au.com.mineauz.minigames.MinigamePlayer;
 import au.com.mineauz.minigames.Minigames;
@@ -11,8 +13,6 @@ import au.com.mineauz.minigames.minigame.Minigame;
 
 import au.com.addstar.copycat.GameBoard;
 import au.com.addstar.copycat.PlayerStation;
-import au.com.addstar.monolith.MonoWorld;
-import au.com.addstar.monolith.ParticleEffect;
 
 public class EliminationMainState extends MainState
 {
@@ -42,8 +42,8 @@ public class EliminationMainState extends MainState
 
 			player.sendMessage("You did not finish in time. You have lost a life", "error");
 			game.broadcast(player.getDisplayName() + " lost a life.", player);
-			player.getPlayer().getWorld().playSound(player.getPlayer().getLocation(), Sound.IRONGOLEM_HIT, 1f, 10);
-			MonoWorld.getWorld(player.getPlayer().getWorld()).playParticleEffect(player.getPlayer().getLocation(), ParticleEffect.VILLAGER_ANGRY, 0, 10, new Vector(1, 1, 1));
+			player.getPlayer().getWorld().playSound(player.getPlayer().getLocation(), Sound.ENTITY_IRONGOLEM_HURT, 1f, 10);
+			player.getPlayer().getWorld().spawnParticle(Particle.VILLAGER_ANGRY, player.getPlayer().getLocation(), 10, 1, 1, 1, 0);
 			
 			if(player.getDeaths() >= minigame.getLives())
 			{
@@ -79,14 +79,16 @@ public class EliminationMainState extends MainState
 			{
 				station.setCanModify(false);
 				game.broadcast(player.getDisplayName() + " has completed the pattern!", null);
-				game.getBossDisplay().setText(player.getDisplayName() + " Finished");
+				BossBar bar = game.getBossDisplay();
+				bar.setTitle(player.getDisplayName() + " Finished");
 				lastMessageTime = System.currentTimeMillis();
 				
-				player.getPlayer().getWorld().playSound(player.getPlayer().getLocation(), Sound.LEVEL_UP, 1.6f, 10);
-				MonoWorld.getWorld(player.getPlayer().getWorld()).playParticleEffect(player.getPlayer().getLocation(), ParticleEffect.VILLAGER_HAPPY, 0, 10, new Vector(1, 1, 1));
+				player.getPlayer().getWorld().playSound(player.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.6f, 10);
+				player.getPlayer().getWorld().spawnParticle(Particle.VILLAGER_HAPPY, player.getPlayer().getLocation(), 10, 1, 1, 1, 0);
 				
 				mWaiting.remove(player);
-				game.getBossDisplay().setPercent(1 - (mWaiting.size() / (float)game.getMinigame().getPlayers().size()));
+				bar.setProgress(1 - (mWaiting.size() / (float)game.getMinigame().getPlayers().size()));
+				bar.setColor(BarColor.PURPLE);
 				
 				if(mWaiting.size() <= 1)
 					engine.setState(new BetweenRoundState());
