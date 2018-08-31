@@ -1,5 +1,6 @@
 package au.com.addstar.copycat.logic;
 
+import au.com.mineauz.minigames.MinigameMessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.Conversation;
@@ -41,7 +42,7 @@ public class SubjectDrawState extends TimerState
 		game.broadcast(player.getDisplayName() + " is drawing the pattern.", player);
 		player.teleport(station.getSpawnLocation());
 		station.setPlayer(player);
-		player.sendMessage("Draw the pattern in the area in front of you. You have " + Util.getTimeRemainString(game.getModule().getSubjectDrawTime()) + ". If you do not fill every block, a random pattern will be used.", "win");
+		player.sendMessage("Draw the pattern in the area in front of you. You have " + Util.getTimeRemainString(game.getModule().getSubjectDrawTime()) + ". If you do not fill every block, a random pattern will be used.", MinigameMessageType.WIN);
 		
 		LoadoutModule module = LoadoutModule.getMinigameModule(minigame);
 		PlayerLoadout defaultLoadout = module.getLoadout("default");
@@ -126,7 +127,7 @@ public class SubjectDrawState extends TimerState
 	{
 		if(input.equalsIgnoreCase("skip"))
 		{
-			mPlayer.sendMessage("You have elected to use a random pattern.", null);
+			mPlayer.sendMessage("You have elected to use a random pattern.", MinigameMessageType.INFO);
 			mSkip = true;
 			mEngine.setState(mBoard.getMainState());
 		}
@@ -135,7 +136,7 @@ public class SubjectDrawState extends TimerState
 			PatternStation station = mBoard.getPatternStation();
 			Subject subject = Subject.from(station.getPatternLocation(), station.getFacing(), mBoard.getSubjectSize());
 			if(subject == null)
-				mPlayer.sendMessage("Your pattern is incomplete. All spots must be used.");
+				mPlayer.sendMessage("Your pattern is incomplete. All spots must be used.",MinigameMessageType.ERROR);
 			else
 				mEngine.setState(mBoard.getMainState());
 		}

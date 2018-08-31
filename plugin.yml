@@ -1,8 +1,6 @@
 name: CopyCat
-version: ${pom.version}
-
+version: ${plugin.version}
 main: au.com.addstar.copycat.CopyCatPlugin
-
 depend: [Minigames, Monolith]
 
 permissions:

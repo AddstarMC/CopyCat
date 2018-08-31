@@ -60,7 +60,7 @@ public class CopyCatPlugin extends JavaPlugin
 		new CopyCatCommand().registerAs(getCommand("copycat"));
 		
 		GameMechanics.addGameMechanic(new CopyCatLogic());
-		Minigames.plugin.mdata.addModule(CopyCatModule.class);
+		Minigames.getPlugin().getMinigameManager().addModule(CopyCatModule.class);
 		
 		Bukkit.getPluginManager().registerEvents(new EventListener(), this);
 	}
@@ -69,7 +69,7 @@ public class CopyCatPlugin extends JavaPlugin
 	public void onDisable()
 	{
 		GameMechanics.removeGameMechanic("CopyCat");
-		Minigames.plugin.mdata.removeModule("CopyCat", CopyCatModule.class);
+		Minigames.getPlugin().getMinigameManager().removeModule("CopyCat", CopyCatModule.class);
 	}
 	
 	public static void applyDefaultsForGame(GameBoard board)

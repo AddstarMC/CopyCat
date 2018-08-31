@@ -2,6 +2,7 @@ package au.com.addstar.copycat.logic;
 
 import java.util.HashSet;
 
+import au.com.mineauz.minigames.MinigameMessageType;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.boss.BarColor;
@@ -38,20 +39,20 @@ public class EliminationMainState extends MainState
 		for(MinigamePlayer player : mWaiting)
 		{
 			player.addDeath();
-			minigame.setScore(player, minigame.getLives() - player.getDeaths());
+			minigame.setScore(player, Math.round(minigame.getLives() - player.getDeaths()));
 
-			player.sendMessage("You did not finish in time. You have lost a life", "error");
+			player.sendMessage("You did not finish in time. You have lost a life", MinigameMessageType.ERROR);
 			game.broadcast(player.getDisplayName() + " lost a life.", player);
 			player.getPlayer().getWorld().playSound(player.getPlayer().getLocation(), Sound.ENTITY_IRONGOLEM_HURT, 1f, 10);
 			player.getPlayer().getWorld().spawnParticle(Particle.VILLAGER_ANGRY, player.getPlayer().getLocation(), 10, 1, 1, 1, 0);
 			
 			if(player.getDeaths() >= minigame.getLives())
 			{
-				player.sendMessage("You were eliminated from the game.", "error");
+				player.sendMessage("You were eliminated from the game.", MinigameMessageType.ERROR);
 				PlayerStation station = game.getStation(player);
 				station.setPlayer(null);
 				
-				Minigames.plugin.pdata.quitMinigame(player, true);
+				Minigames.getPlugin().getPlayerManager().quitMinigame(player, true);
 				
 				if(minigame.getPlayers().size() > 1)
 					game.broadcast(player.getDisplayName() + " was eliminated. Only " + minigame.getPlayers().size() + " players remain.", player);

@@ -55,7 +55,7 @@ public class ScoringMainState extends MainState
 			{
 				PlayerStation station = game.getStation(player);
 				station.setPlayer(null);
-				Minigames.plugin.pdata.quitMinigame(player, true);
+				Minigames.getPlugin().getPlayerManager().quitMinigame(player, true);
 			}
 		}
 	}

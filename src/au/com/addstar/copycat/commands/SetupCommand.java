@@ -59,7 +59,7 @@ public class SetupCommand implements ICommand
 		if(args.length != 3)
 			return false;
 		
-		Minigame minigame = Minigames.plugin.mdata.getMinigame(args[0]);
+		Minigame minigame = Minigames.getPlugin().getMinigameManager().getMinigame(args[0]);
 		if(minigame == null)
 			throw new BadArgumentException(1, "Unknown minigame " + args[0]);
 		
@@ -128,7 +128,7 @@ public class SetupCommand implements ICommand
 		{
 			ArrayList<String> matches = new ArrayList<String>();
 			String toMatch = args[0].toLowerCase();
-			for(String name : Minigames.plugin.mdata.getAllMinigames().keySet())
+			for(String name : Minigames.getPlugin().getMinigameManager().getAllMinigames().keySet())
 			{
 				if(name.toLowerCase().startsWith(toMatch))
 					matches.add(name);

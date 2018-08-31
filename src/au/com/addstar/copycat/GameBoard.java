@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import au.com.mineauz.minigames.MinigameMessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.boss.BarColor;
@@ -275,8 +276,8 @@ public class GameBoard
 		// Remove excess
 		for(MinigamePlayer player : excess)
 		{
-			player.sendMessage("There was not enough spots to place players", "error");
-			Minigames.plugin.pdata.quitMinigame(player, true);
+			player.sendMessage("There was not enough spots to place players", MinigameMessageType.ERROR);
+			Minigames.getPlugin().getPlayerManager().quitMinigame(player, true);
 		}
 		
 		for(PlayerStation station : mStations)
@@ -294,7 +295,7 @@ public class GameBoard
 				{
 					Minigame minigame = getMinigame();
 					for(MinigamePlayer player : minigame.getPlayers())
-						minigame.setScore(player, minigame.getLives());
+						minigame.setScore(player, Math.round(minigame.getLives()));
 				}
 			}
 		});

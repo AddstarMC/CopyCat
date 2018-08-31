@@ -1,8 +1,10 @@
 package au.com.addstar.copycat;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
+import au.com.mineauz.minigames.MinigameMessageType;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -37,8 +39,9 @@ public class CopyCatLogic extends GameMechanicBase
 	}
 	
 	@Override
-	public void balanceTeam( List<MinigamePlayer> players, Minigame minigame )
+	public List<MinigamePlayer> balanceTeam( List<MinigamePlayer> players, Minigame minigame )
 	{
+		return Collections.EMPTY_LIST;
 	}
 
 	@Override
@@ -77,7 +80,7 @@ public class CopyCatLogic extends GameMechanicBase
 	@EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
 	private void onBlockPlace(BlockPlaceEvent event)
 	{
-		MinigamePlayer player = Minigames.plugin.pdata.getMinigamePlayer(event.getPlayer());
+		MinigamePlayer player = Minigames.getPlugin().getPlayerManager().getMinigamePlayer(event.getPlayer());
 		
 		GameBoard board = getBoard(player);
 		if(board != null)
@@ -92,7 +95,7 @@ public class CopyCatLogic extends GameMechanicBase
 	@EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
 	private void onBlockBreak(BlockBreakEvent event)
 	{
-		MinigamePlayer player = Minigames.plugin.pdata.getMinigamePlayer(event.getPlayer());
+		MinigamePlayer player = Minigames.getPlugin().getPlayerManager().getMinigamePlayer(event.getPlayer());
 		
 		GameBoard board = getBoard(player);
 		if(board != null)
@@ -109,7 +112,7 @@ public class CopyCatLogic extends GameMechanicBase
 		
 		if(board == null)
 		{
-			player.sendMessage(ChatColor.RED + "No CopyCat board is linked with this minigame");
+			player.sendMessage(ChatColor.RED + "No CopyCat board is linked with this minigame", MinigameMessageType.ERROR);
 			return false;
 		}
 		
@@ -117,7 +120,7 @@ public class CopyCatLogic extends GameMechanicBase
 		if(!errors.isEmpty())
 		{
 			for(String error : errors)
-				player.sendMessage(ChatColor.RED + error);
+				player.sendMessage(error,MinigameMessageType.ERROR);
 
 			return false;
 		}
@@ -145,13 +148,6 @@ public class CopyCatLogic extends GameMechanicBase
 		}
 	}
 
-	@Override
-	public void joinMinigame( Minigame minigame, MinigamePlayer player )
-	{
-		GameBoard board = getBoard(minigame);
-		if(player.isInMinigame())
-			board.getBossDisplay().addPlayer(player.getPlayer());
-	}
 
 	@Override
 	public void quitMinigame( Minigame minigame, MinigamePlayer player, boolean forced )
@@ -176,6 +172,13 @@ public class CopyCatLogic extends GameMechanicBase
 	public void stopMinigame( Minigame minigame, MinigamePlayer player )
 	{
 		// Only for global type
+	}
+
+	@Override
+	public void onJoinMinigame(Minigame minigame, MinigamePlayer player) {
+		GameBoard board = getBoard(minigame);
+		if(player.isInMinigame())
+			board.getBossDisplay().addPlayer(player.getPlayer());
 	}
 
 	@Override
