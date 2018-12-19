@@ -4,7 +4,7 @@
 
   <groupId>au.com.addstar</groupId>
   <artifactId>CopyCat</artifactId>
-  <version>1.1.0-SNAPSHOT</version>
+  <version>1.2.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>CopyCat</name>
@@ -20,35 +20,23 @@
   
   <repositories>
     <repository>
-      <id>bukkit-repo</id>
-      <url>http://repo.bukkit.org/content/groups/public/</url>
-    </repository>
-    <repository>
-      <id>bukkit-maven</id>
-      <url>http://repo.bukkit.org/content/repositories/releases/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
+      <id>md5</id>
+      <url>http://repo.md-5.net/</url>
     </repository>
     <repository>
       <id>addstar-repo</id>
-      <url>http://maven.addstar.com.au/artifactory/ext-release-local</url>
+      <url>https://maven.addstar.com.au/artifactory/ext-release-local</url>
     </repository>
     <repository>
       <id>addstar-snapshot-repo</id>
-      <url>http://maven.addstar.com.au/artifactory/ext-snapshot-local</url>
+      <url>https://maven.addstar.com.au/artifactory/ext-snapshot-local</url>
     </repository>
-    <repository>
-	  <id>comphenix-rep</id>
-	  <name>Comphenix Repository</name>
-	  <url>http://repo.comphenix.net/content/groups/public</url>
-	</repository>
   </repositories>
 
   <dependencies>
     <dependency>
-      <groupId>org.bukkit</groupId>
-      <artifactId>bukkit</artifactId>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
       <version>${spigot.version}</version>
     </dependency>
 	<dependency>
