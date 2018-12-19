@@ -1,9 +1,6 @@
 package au.com.addstar.copycat;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -42,7 +39,7 @@ public class CopyCatModule extends MinigameModule
 		mAllowSubjectDraw = new BooleanFlag(true, "allowPatternDraw");
 		mWaitTime = new IntegerFlag(10, "waitTime");
 		mSaveSubjects = new BooleanFlag(true, "savePatterns");
-		mMode = new EnumFlag<GameMode>(GameMode.Elimination, "copycatMode");
+		mMode = new EnumFlag<>(GameMode.Elimination, "copycatMode");
 		mMaxRoundTime = new IntegerFlag(120, "maxRoundTime");
 		mBackBoardDistance = new IntegerFlag(4, "backboardDistance");
 		mBackBoardHeight = new IntegerFlag(3, "backboardHeight");
@@ -64,7 +61,7 @@ public class CopyCatModule extends MinigameModule
 	@Override
 	public Map<String, Flag<?>> getFlags()
 	{
-		HashMap<String, Flag<?>> flags = new HashMap<String, Flag<?>>();
+		HashMap<String, Flag<?>> flags = new HashMap<>();
 		flags.put(mSubjectDrawTime.getName(), mSubjectDrawTime);
 		flags.put(mAllowSubjectDraw.getName(), mAllowSubjectDraw);
 		flags.put(mWaitTime.getName(), mWaitTime);
@@ -108,18 +105,18 @@ public class CopyCatModule extends MinigameModule
 	public boolean displayMechanicSettings( Menu previous )
 	{
 		Menu menu = new Menu(6, getMinigame().getName(false), previous.getViewer());
-		menu.addItem(mWaitTime.getMenuItem("Wait Time", Material.WATCH, Arrays.asList("The time in between rounds in seconds.")));
-		menu.addItem(mMaxRoundTime.getMenuItem("Max Round Time", Material.WATCH, Arrays.asList("The maximum amount of time one round","can run for")));
+		menu.addItem(mWaitTime.getMenuItem("Wait Time", Material.CLOCK, Collections.singletonList("The time in between rounds in seconds.")));
+		menu.addItem(mMaxRoundTime.getMenuItem("Max Round Time", Material.CLOCK, Arrays.asList("The maximum amount of time one round","can run for")));
 		menu.addItem(getMenuItem("Mode", Material.PAPER, mMode, GameMode.class, Arrays.asList("The CopyCat game mode to use for","this minigame.")));
 		menu.addItem(new MenuItemNewLine());
 		menu.addItem(mAllowSubjectDraw.getMenuItem("Allow Pattern Draw", Material.LEVER, Arrays.asList("When true, before the round starts,","a player will be selected to draw the pattern","for the others")));
-		menu.addItem(mSubjectDrawTime.getMenuItem("Pattern Draw Time", Material.WATCH, Arrays.asList("The time allowed for drawing the pattern")));
-		menu.addItem(mSaveSubjects.getMenuItem("Save Patterns", Material.REDSTONE_TORCH_ON, Arrays.asList("When true, patterns created by players","during pattern drawing time will be","saved and used during random pattern loading")));
+		menu.addItem(mSubjectDrawTime.getMenuItem("Pattern Draw Time", Material.CLOCK, Collections.singletonList("The time allowed for drawing the pattern")));
+		menu.addItem(mSaveSubjects.getMenuItem("Save Patterns", Material.REDSTONE_TORCH, Arrays.asList("When true, patterns created by players","during pattern drawing time will be","saved and used during random pattern loading")));
 		menu.addItem(new MenuItemNewLine());
 		menu.addItem(mBackBoardDistance.getMenuItem("Backboard Distance", Material.IRON_BOOTS, Arrays.asList("The distance from the end of the ","play area where the backboard will be located.")));
-		menu.addItem(mBackBoardHeight.getMenuItem("Backboard Height", Material.FEATHER, Arrays.asList("The height offset for the backboard")));
+		menu.addItem(mBackBoardHeight.getMenuItem("Backboard Height", Material.FEATHER, Collections.singletonList("The height offset for the backboard")));
 		
-		menu.addItem(new MenuItemPage("Back", Material.REDSTONE_TORCH_ON, previous), menu.getSize() - 9);
+		menu.addItem(new MenuItemPage("Back", Material.REDSTONE_TORCH, previous), menu.getSize() - 9);
 		menu.displayMenu(previous.getViewer());
 		
 		return true;
@@ -127,17 +124,14 @@ public class CopyCatModule extends MinigameModule
 	
 	private <T extends Enum<T>> MenuItemEnum<T> getMenuItem(String name, Material material, final EnumFlag<T> flag, Class<T> enumClass, List<String> description)
 	{
-		MenuItemEnum<T> item = new MenuItemEnum<T>(enumClass, name, description, new Callback<T>()
-		{
+		MenuItemEnum<T> item = new MenuItemEnum<>(enumClass, name, description, new Callback<T>() {
 			@Override
-			public void setValue( T value )
-			{
+			public void setValue(T value) {
 				flag.setFlag(value);
 			}
 
 			@Override
-			public T getValue()
-			{
+			public T getValue() {
 				return flag.getFlag();
 			}
 		}, material);

@@ -24,7 +24,7 @@ public class MenuItemEnum<T extends Enum<T>> extends MenuItemList
 	private static <T extends Enum<T>> List<String> makeOptions(Class<T> enumClass)
 	{
 		EnumSet<T> set = EnumSet.allOf(enumClass);
-		ArrayList<String> list = new ArrayList<String>(set.size());
+		ArrayList<String> list = new ArrayList<>(set.size());
 		for(T e : set)
 			list.add(e.name());
 		

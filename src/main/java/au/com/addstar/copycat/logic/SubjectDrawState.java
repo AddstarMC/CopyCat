@@ -147,14 +147,7 @@ public class SubjectDrawState extends TimerState
 		@Override
 		public Prompt acceptInput( ConversationContext context, final String input )
 		{
-			Bukkit.getScheduler().runTask(CopyCatPlugin.instance, new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					onInput(input);
-				}
-			});
+			Bukkit.getScheduler().runTask(CopyCatPlugin.instance, () -> onInput(input));
 			return this;
 		}
 		

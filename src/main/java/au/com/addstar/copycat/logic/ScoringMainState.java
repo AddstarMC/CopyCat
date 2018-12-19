@@ -18,7 +18,7 @@ public class ScoringMainState extends MainState
 {
 	private int mNextComplete = 1;
 	
-	private HashSet<MinigamePlayer> mWaiting = new HashSet<MinigamePlayer>();
+	private HashSet<MinigamePlayer> mWaiting = new HashSet<>();
 	
 	@Override
 	public void onStart( StateEngine<GameBoard> engine, GameBoard game )
@@ -48,7 +48,7 @@ public class ScoringMainState extends MainState
 		
 		if(winner != null)
 		{
-			HashSet<MinigamePlayer> players = new HashSet<MinigamePlayer>(minigame.getPlayers());
+			HashSet<MinigamePlayer> players = new HashSet<>(minigame.getPlayers());
 			players.remove(winner);
 			
 			for(MinigamePlayer player : players)

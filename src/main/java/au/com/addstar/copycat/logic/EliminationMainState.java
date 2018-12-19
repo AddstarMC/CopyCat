@@ -17,7 +17,7 @@ import au.com.addstar.copycat.PlayerStation;
 
 public class EliminationMainState extends MainState
 {
-	private HashSet<MinigamePlayer> mWaiting = new HashSet<MinigamePlayer>();
+	private HashSet<MinigamePlayer> mWaiting = new HashSet<>();
 
 	@Override
 	public void onStart( StateEngine<GameBoard> engine, GameBoard game )

@@ -115,7 +115,7 @@ public class SetStationCommand implements ICommand
 	{
 		if(args.length == 1)
 		{
-			ArrayList<String> matches = new ArrayList<String>();
+			ArrayList<String> matches = new ArrayList<>();
 			String toMatch = args[0].toLowerCase();
 			for(String name : Minigames.getPlugin().getMinigameManager().getAllMinigames().keySet())
 			{

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,14 +20,14 @@ public class Subject
 {
 	private File mFile;
 	private int mSize;
-	private MaterialData[] mData;
+	private Material[] mData;
 	
-	public Subject(int size, MaterialData[] data)
+	public Subject(int size, Material[] data)
 	{
 		this(size, data, null);
 	}
 	
-	private Subject(int size, MaterialData[] data, File file)
+	private Subject(int size, Material[] data, File file)
 	{
 		mSize = size;
 		mData = data;
@@ -56,10 +57,9 @@ public class Subject
 			for(int y = 0; y < mSize; ++y)
 			{
 				Block block = location.getWorld().getBlockAt(bx + facing.getModX() * x, by + y, bz + facing.getModZ() * x);
-				MaterialData data = mData[x + (y * mSize)];
+				Material data = mData[x + (y * mSize)];
 				
-				block.setType(data.getItemType());
-				block.setData(data.getData());
+				block.setBlockData(data.createBlockData());
 			}
 		}
 	}
@@ -80,10 +80,9 @@ public class Subject
 			{
 				
 				Block block = location.getWorld().getBlockAt(bx + right.getModX() * x + facing.getModX() * y, by, bz + right.getModZ() * x + facing.getModZ() * y);
-				MaterialData data = mData[x + (y * mSize)];
+				Material data = mData[x + (y * mSize)];
 				
-				block.setType(data.getItemType());
-				block.setData(data.getData());
+				block.setBlockData(data.createBlockData());
 			}
 		}
 	}
@@ -103,8 +102,8 @@ public class Subject
 			for(int y = 0; y < mSize; ++y)
 			{
 				Block block = location.getWorld().getBlockAt(bx + right.getModX() * x + facing.getModX() * y, by, bz + right.getModZ() * x + facing.getModZ() * y);
-				MaterialData data = mData[x + (y * mSize)];
-				if(block.getType() != data.getItemType() || block.getData() != data.getData())
+				Material data = mData[x + (y * mSize)];
+				if(block.getType() != data)
 					return false;
 			}
 		}
@@ -116,11 +115,9 @@ public class Subject
 	{
 		YamlConfiguration config = new YamlConfiguration();
 		config.set("size", mSize);
-		ArrayList<String> mats = new ArrayList<String>(mData.length);
-		for(int i = 0; i < mData.length; ++i)
-		{
-			MaterialData data = mData[i];
-			mats.add(String.format("%s:%d", data.getItemType().name(), data.getData()));
+		ArrayList<String> mats = new ArrayList<>(mData.length);
+		for (Material data : mData) {
+			mats.add(data.name());
 		}
 		
 		config.set("data", mats);
@@ -137,7 +134,7 @@ public class Subject
 		int by = location.getBlockY();
 		int bz = location.getBlockZ();
 		
-		MaterialData[] data = new MaterialData[size * size];
+		Material[] data = new Material[size * size];
 		for(int x = 0; x < size; ++x)
 		{
 			for(int y = 0; y < size; ++y)
@@ -146,7 +143,7 @@ public class Subject
 				if(block.isEmpty())
 					return false;
 				
-				data[x + (y * size)] = block.getType().getNewData(block.getData());
+				data[x + (y * size)] = block.getType();
 				if(!CopyCatPlugin.isValidBlockType(data[x + (y * size)]))
 					return false;
 			}
@@ -165,13 +162,13 @@ public class Subject
 		return null;
 	}
 	
-	public static Subject from(File file) throws FileNotFoundException, IOException, InvalidConfigurationException
+	public static Subject from(File file) throws IOException, InvalidConfigurationException
 	{
 		YamlConfiguration config = new YamlConfiguration();
 		config.load(file);
 		
 		int size = config.getInt("size");
-		MaterialData[] data = new MaterialData[size * size];
+		Material[] data = new Material[size * size];
 		
 		List<String> dataStrings = config.getStringList("data");
 		if(dataStrings.size() != data.length)
@@ -182,7 +179,8 @@ public class Subject
 			String str = dataStrings.get(i);
 			Material mat = Material.valueOf(str.split(":")[0]);
 			int dataVal = Integer.valueOf(str.split(":")[1]);
-			data[i] = mat.getNewData((byte)dataVal);
+			Material material = Bukkit.getUnsafe().fromLegacy(new MaterialData(mat,(byte)dataVal));
+			data[i]=material;
 		}
 		
 		return new Subject(size, data, file);

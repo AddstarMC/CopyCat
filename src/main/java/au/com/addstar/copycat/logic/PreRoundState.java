@@ -40,7 +40,7 @@ public class PreRoundState extends State<GameBoard>
 		// End of game
 		else
 		{
-			Minigames.getPlugin().getPlayerManager().endMinigame(minigame, new ArrayList<MinigamePlayer>(minigame.getPlayers()), Collections.<MinigamePlayer>emptyList());
+			Minigames.getPlugin().getPlayerManager().endMinigame(minigame, new ArrayList<>(minigame.getPlayers()), Collections.<MinigamePlayer>emptyList());
 			game.endGame();
 		}
 	}

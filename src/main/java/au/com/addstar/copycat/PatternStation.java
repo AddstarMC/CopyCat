@@ -105,7 +105,7 @@ public class PatternStation
 		{
 			for(int z = 0; z < size; ++z)
 			{
-				player.sendBlockChange(corner.clone().add(x * right.getModX() + z * mFacing.getModX(), 0, x * right.getModZ() + z * mFacing.getModZ()), Material.WOOL, (byte)4);
+				player.sendBlockChange(corner.clone().add(x * right.getModX() + z * mFacing.getModX(), 0, x * right.getModZ() + z * mFacing.getModZ()),Material.YELLOW_WOOL.createBlockData());
 			}
 		}
 	}
@@ -121,10 +121,10 @@ public class PatternStation
 		if(location.getY() != mLocation.getY())
 			return false;
 		
-		int minX = Math.min(mLocation.getBlockX() + 1 * right.getModX() + 1 * mFacing.getModX(), mLocation.getBlockX() + (1 + size-1) * right.getModX() + (1 + size-1) * mFacing.getModX());
-		int maxX = Math.max(mLocation.getBlockX() + 1 * right.getModX() + 1 * mFacing.getModX(), mLocation.getBlockX() + (1 + size-1) * right.getModX() + (1 + size-1) * mFacing.getModX());
-		int minZ = Math.min(mLocation.getBlockZ() + 1 * right.getModZ() + 1 * mFacing.getModZ(), mLocation.getBlockZ() + (1 + size-1) * right.getModZ() + (1 + size-1) * mFacing.getModZ());
-		int maxZ = Math.max(mLocation.getBlockZ() + 1 * right.getModZ() + 1 * mFacing.getModZ(), mLocation.getBlockZ() + (1 + size-1) * right.getModZ() + (1 + size-1) * mFacing.getModZ());
+		int minX = Math.min(mLocation.getBlockX() + right.getModX() + mFacing.getModX(), mLocation.getBlockX() + (1 + size-1) * right.getModX() + (1 + size-1) * mFacing.getModX());
+		int maxX = Math.max(mLocation.getBlockX() + right.getModX() + mFacing.getModX(), mLocation.getBlockX() + (1 + size-1) * right.getModX() + (1 + size-1) * mFacing.getModX());
+		int minZ = Math.min(mLocation.getBlockZ() + right.getModZ() + mFacing.getModZ(), mLocation.getBlockZ() + (1 + size-1) * right.getModZ() + (1 + size-1) * mFacing.getModZ());
+		int maxZ = Math.max(mLocation.getBlockZ() + right.getModZ() + mFacing.getModZ(), mLocation.getBlockZ() + (1 + size-1) * right.getModZ() + (1 + size-1) * mFacing.getModZ());
 		
 		return (location.getBlockX() >= minX && location.getBlockX() <= maxX && location.getBlockZ() >= minZ && location.getBlockZ() <= maxZ);
 	}

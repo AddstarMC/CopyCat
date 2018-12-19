@@ -86,7 +86,7 @@ public class SubjectStorage
 		if(!mLoadedSubjects.containsKey(size))
 			loadSubjects(size);
 		
-		ArrayList<Subject> subjects = new ArrayList<Subject>(mLoadedSubjects.get(size));
+		ArrayList<Subject> subjects = new ArrayList<>(mLoadedSubjects.get(size));
 		if(subjects.isEmpty())
 			return null;
 		

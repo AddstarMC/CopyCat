@@ -74,7 +74,7 @@ public class Util
 			
 			long value = time / TimeUnit.MINUTES.toMillis(1);
 			minutes = value;
-			text.append(String.valueOf(value));
+			text.append(value);
 			text.append(" ");
 			if(value != 1)
 				text.append("Minutes");
@@ -89,7 +89,7 @@ public class Util
 				text.append(" ");
 			
 			long value = time / TimeUnit.SECONDS.toMillis(1);
-			text.append(String.valueOf(value));
+			text.append(value);
 			text.append(" ");
 			if(value != 1)
 				text.append("Seconds");
@@ -103,7 +103,7 @@ public class Util
 	
 	public static List<String> matchString(String str, Collection<String> possibilities)
 	{
-		ArrayList<String> matches = new ArrayList<String>();
+		ArrayList<String> matches = new ArrayList<>();
 		str = str.toLowerCase();
 		
 		for(String possible : possibilities)

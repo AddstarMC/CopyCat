@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import au.com.addstar.copycat.commands.CopyCatCommand;
@@ -36,14 +35,14 @@ public class CopyCatPlugin extends JavaPlugin
 	static
 	{
 		blockTypes = ImmutableList.<ItemStack>builder()
-			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)0))
-			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)4))
-			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)3))
-			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)9))
-			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)12))
-			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)13))
-			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)14))
-			.add(new ItemStack(Material.STAINED_CLAY, 64, (short)15))
+			.add(new ItemStack(Material.WHITE_TERRACOTTA, 64))
+			.add(new ItemStack(Material.YELLOW_TERRACOTTA, 64))
+			.add(new ItemStack(Material.LIGHT_BLUE_TERRACOTTA, 64))
+			.add(new ItemStack(Material.CYAN_TERRACOTTA, 64))
+			.add(new ItemStack(Material.BROWN_TERRACOTTA, 64))
+			.add(new ItemStack(Material.GREEN_TERRACOTTA, 64))
+			.add(new ItemStack(Material.RED_TERRACOTTA, 64))
+			.add(new ItemStack(Material.BLACK_TERRACOTTA, 64))
 			.build();
 	}
 	
@@ -56,9 +55,9 @@ public class CopyCatPlugin extends JavaPlugin
 			getDataFolder().mkdirs();
 		
 		mStorage = new SubjectStorage(new File(getDataFolder(), "subjects"));
-		
-		new CopyCatCommand().registerAs(getCommand("copycat"));
-		
+
+		getCommand("copycat").setExecutor(new CopyCatCommand());
+
 		GameMechanics.addGameMechanic(new CopyCatLogic());
 		Minigames.getPlugin().getMinigameManager().addModule(CopyCatModule.class);
 		
@@ -109,15 +108,13 @@ public class CopyCatPlugin extends JavaPlugin
 		return mStorage;
 	}
 	
-	@SuppressWarnings( "deprecation" )
-	public static boolean isValidBlockType(MaterialData data)
+	public static boolean isValidBlockType(Material data)
 	{
 		for(ItemStack item : blockTypes)
 		{
-			if(item.getType() == data.getItemType() && item.getDurability() == data.getData())
+			if(item.getType() == data)
 				return true;
 		}
-		
 		return false;
 	}
 }

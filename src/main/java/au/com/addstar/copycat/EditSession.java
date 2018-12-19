@@ -21,7 +21,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 public class EditSession
 {
-	public static HashMap<Player, EditSession> activeSessions = new HashMap<Player, EditSession>();
+	public static HashMap<Player, EditSession> activeSessions = new HashMap<>();
 	
 	private Player mPlayer;
 	private GameBoard mBoard;
@@ -185,14 +185,7 @@ public class EditSession
 		@Override
 		public Prompt acceptInput( final ConversationContext context, final String input )
 		{
-			Bukkit.getScheduler().runTask(CopyCatPlugin.instance, new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					onCommand(input, context.getForWhom());
-				}
-			});
+			Bukkit.getScheduler().runTask(CopyCatPlugin.instance, () -> onCommand(input, context.getForWhom()));
 			return this;
 		}
 

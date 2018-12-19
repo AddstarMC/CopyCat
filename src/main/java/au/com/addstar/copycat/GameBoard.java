@@ -42,7 +42,7 @@ public class GameBoard
 	private Subject mSubject;
 	
 	private MinigamePlayer mSubjectDrawer;
-	private StateEngine<GameBoard> mEngine = new StateEngine<GameBoard>();
+	private StateEngine<GameBoard> mEngine = new StateEngine<>();
 	private BossBar mBossDisplay;
 	
 	private EditSession mEditSession;
@@ -132,7 +132,7 @@ public class GameBoard
 	
 	public List<String> getErrors()
 	{
-		ArrayList<String> errors = new ArrayList<String>();
+		ArrayList<String> errors = new ArrayList<>();
 		
 		for(int i = 0; i < mStations.length; ++i)
 		{
@@ -258,7 +258,7 @@ public class GameBoard
 		mNextToDraw = CopyCatPlugin.rand.nextInt(minigame.getPlayers().size());
 		
 		// Assign stations
-		ArrayList<MinigamePlayer> excess = new ArrayList<MinigamePlayer>(); 
+		ArrayList<MinigamePlayer> excess = new ArrayList<>();
 		for(int i = 0; i < minigame.getPlayers().size(); ++i)
 		{
 			MinigamePlayer player = minigame.getPlayers().get(i);
@@ -286,17 +286,12 @@ public class GameBoard
 		Objective objective = minigame.getScoreboardManager().getObjective(minigame.getName(false));
 		objective.setDisplayName("\u21D0  " + minigame.getName(true) + "  \u21D2");
 		
-		Bukkit.getScheduler().runTask(CopyCatPlugin.instance, new Runnable()
-		{
-			@Override
-			public void run()
+		Bukkit.getScheduler().runTask(CopyCatPlugin.instance, () -> {
+			if(mModule.getMode() == GameMode.Elimination)
 			{
-				if(mModule.getMode() == GameMode.Elimination)
-				{
-					Minigame minigame = getMinigame();
-					for(MinigamePlayer player : minigame.getPlayers())
-						minigame.setScore(player, Math.round(minigame.getLives()));
-				}
+				Minigame minigame1 = getMinigame();
+				for(MinigamePlayer player : minigame1.getPlayers())
+					minigame1.setScore(player, Math.round(minigame1.getLives()));
 			}
 		});
 		
