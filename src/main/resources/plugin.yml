@@ -1,5 +1,6 @@
 name: CopyCat
 version: ${plugin.version}
+api-version: ${spigot.api.version}
 main: au.com.addstar.copycat.CopyCatPlugin
 depend: [Minigames, Monolith]
 
