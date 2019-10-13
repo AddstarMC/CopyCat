@@ -154,12 +154,12 @@ public class CopyCatModule extends MinigameModule
 		return mMaxRoundTime.getFlag() * 1000;
 	}
 	
-	public int getBackboardDistance()
+	int getBackboardDistance()
 	{
 		return mBackBoardDistance.getFlag();
 	}
 	
-	public int getBackboardHeight()
+	int getBackboardHeight()
 	{
 		return mBackBoardHeight.getFlag();
 	}
@@ -174,7 +174,7 @@ public class CopyCatModule extends MinigameModule
 		return mSaveSubjects.getFlag();
 	}
 	
-	public GameMode getMode()
+	GameMode getMode()
 	{
 		return mMode.getFlag();
 	}

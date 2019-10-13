@@ -3,17 +3,17 @@ package au.com.addstar.copycat.logic;
 import java.util.HashSet;
 
 import au.com.mineauz.minigames.MinigameMessageType;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BossBar;
 
-import au.com.mineauz.minigames.MinigamePlayer;
+import au.com.mineauz.minigames.objects.MinigamePlayer;
 import au.com.mineauz.minigames.Minigames;
 import au.com.mineauz.minigames.minigame.Minigame;
 
 import au.com.addstar.copycat.GameBoard;
 import au.com.addstar.copycat.PlayerStation;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BossBar;
 
 public class EliminationMainState extends MainState
 {
@@ -43,7 +43,7 @@ public class EliminationMainState extends MainState
 
 			player.sendMessage("You did not finish in time. You have lost a life", MinigameMessageType.ERROR);
 			game.broadcast(player.getDisplayName() + " lost a life.", player);
-			player.getPlayer().playSound(player.getPlayer().getLocation(), Sound.ENTITY_IRON_GOLEM_HURT, 1f, 10);
+			player.getPlayer().getWorld().playSound(player.getPlayer().getLocation(), Sound.ENTITY_IRON_GOLEM_HURT, 1f, 10);
 			player.getPlayer().getWorld().spawnParticle(Particle.VILLAGER_ANGRY, player.getPlayer().getLocation(), 10, 1, 1, 1, 0);
 			
 			if(player.getDeaths() >= minigame.getLives())

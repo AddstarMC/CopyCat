@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,9 +29,8 @@ public class CopyCatPlugin extends JavaPlugin
 	private SubjectStorage mStorage;
 	
 	public static CopyCatPlugin instance;
-	public static final Pattern validNamePattern = Pattern.compile("^[a-zA-Z0-9_]+$");
-	public static final Random rand = new Random();
-	public static final List<ItemStack> blockTypes;
+	static final Random rand = new Random();
+	static final List<ItemStack> blockTypes;
 	
 	static
 	{
@@ -52,11 +52,13 @@ public class CopyCatPlugin extends JavaPlugin
 		instance = this;
 		
 		if(!getDataFolder().exists())
-			getDataFolder().mkdirs();
-		
+			if(!getDataFolder().mkdirs())
+			  getLogger().warning("DataFolder unable to be created check file permissions");
 		mStorage = new SubjectStorage(new File(getDataFolder(), "subjects"));
-
-		getCommand("copycat").setExecutor(new CopyCatCommand());
+    PluginCommand c = getCommand("copycat");
+    if(c != null) {
+      c.setExecutor(new CopyCatCommand());
+    }
 
 		GameMechanics.addGameMechanic(new CopyCatLogic());
 		Minigames.getPlugin().getMinigameManager().addModule(CopyCatModule.class);
@@ -108,7 +110,7 @@ public class CopyCatPlugin extends JavaPlugin
 		return mStorage;
 	}
 	
-	public static boolean isValidBlockType(Material data)
+	static boolean isValidBlockType(Material data)
 	{
 		for(ItemStack item : blockTypes)
 		{

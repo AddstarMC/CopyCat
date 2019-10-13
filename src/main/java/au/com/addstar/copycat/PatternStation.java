@@ -1,5 +1,6 @@
 package au.com.addstar.copycat;
 
+import au.com.mineauz.minigames.objects.MinigamePlayer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -10,8 +11,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-
-import au.com.mineauz.minigames.MinigamePlayer;
 
 public class PatternStation
 {

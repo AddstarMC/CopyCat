@@ -14,7 +14,7 @@
       <plugin.version>${project.version}-${build.number}</plugin.version>
       <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
       <spigot.version>${spigot.api.version}.2-R0.1-SNAPSHOT</spigot.version>
-      <spigot.api.version>1.13</spigot.api.version>
+      <spigot.api.version>1.14</spigot.api.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   
@@ -42,13 +42,13 @@
 	<dependency>
 	  <groupId>au.com.addstar</groupId>
 	  <artifactId>Monolith</artifactId>
-	  <version>1.5.1-SNAPSHOT</version>
+	  <version>1.6.0-SNAPSHOT</version>
 	  <scope>provided</scope>
 	</dependency>
       <dependency>
           <groupId>au.com.mineauz</groupId>
           <artifactId>Minigames</artifactId>
-          <version>1.13-SNAPSHOT</version>
+          <version>1.14-SNAPSHOT</version>
       </dependency>
   </dependencies>
   

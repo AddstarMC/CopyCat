@@ -18,7 +18,7 @@ import au.com.addstar.copycat.logic.PreRoundState;
 import au.com.addstar.copycat.logic.ScoringMainState;
 import au.com.addstar.copycat.logic.State;
 import au.com.addstar.copycat.logic.StateEngine;
-import au.com.mineauz.minigames.MinigamePlayer;
+import au.com.mineauz.minigames.objects.MinigamePlayer;
 import au.com.mineauz.minigames.Minigames;
 import au.com.mineauz.minigames.minigame.Minigame;
 
