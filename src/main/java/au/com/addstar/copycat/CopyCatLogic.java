@@ -5,13 +5,13 @@ import java.util.EnumSet;
 import java.util.List;
 
 import au.com.mineauz.minigames.MinigameMessageType;
+import au.com.mineauz.minigames.objects.MinigamePlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-import au.com.mineauz.minigames.MinigamePlayer;
 import au.com.mineauz.minigames.Minigames;
 import au.com.mineauz.minigames.events.EndMinigameEvent;
 import au.com.mineauz.minigames.events.StartMinigameEvent;
@@ -39,7 +39,7 @@ public class CopyCatLogic extends GameMechanicBase
 	}
 	
 	@Override
-	public List<MinigamePlayer> balanceTeam( List<MinigamePlayer> players, Minigame minigame )
+	public List<MinigamePlayer> balanceTeam(List<MinigamePlayer> players, Minigame minigame )
 	{
 		return Collections.EMPTY_LIST;
 	}

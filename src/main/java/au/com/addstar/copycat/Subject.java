@@ -6,14 +6,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.material.MaterialData;
 
 @SuppressWarnings( "deprecation" )
 public class Subject
@@ -177,10 +175,8 @@ public class Subject
 		for(int i = 0; i < data.length; ++i)
 		{
 			String str = dataStrings.get(i);
-			Material mat = Material.valueOf(str.split(":")[0]);
-			int dataVal = Integer.valueOf(str.split(":")[1]);
-			Material material = Bukkit.getUnsafe().fromLegacy(new MaterialData(mat,(byte)dataVal));
-			data[i]=material;
+			Material mat = Material.valueOf(str);
+			data[i]=mat;
 		}
 		
 		return new Subject(size, data, file);
