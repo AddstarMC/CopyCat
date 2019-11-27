@@ -1,10 +1,13 @@
 package au.com.addstar.copycat;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+
+import au.com.mineauz.minigames.Minigames;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,14 +16,13 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-@SuppressWarnings( "deprecation" )
 public class Subject
 {
 	private File mFile;
 	private int mSize;
 	private Material[] mData;
 	
-	public Subject(int size, Material[] data)
+	private Subject(int size, Material[] data)
 	{
 		this(size, data, null);
 	}
@@ -37,15 +39,14 @@ public class Subject
 		return mSize;
 	}
 	
-	public File getFile()
+	File getFile()
 	{
 		return mFile;
 	}
 	
-	public void placeAt(Location location, BlockFace facing)
+	void placeAt(Location location, BlockFace facing)
 	{
-		Validate.isTrue(facing == BlockFace.NORTH || facing == BlockFace.EAST || facing == BlockFace.SOUTH || facing == BlockFace.WEST);
-		
+    checkValidFacing(facing);
 		int bx = location.getBlockX();
 		int by = location.getBlockY();
 		int bz = location.getBlockZ();
@@ -54,18 +55,21 @@ public class Subject
 		{
 			for(int y = 0; y < mSize; ++y)
 			{
-				Block block = location.getWorld().getBlockAt(bx + facing.getModX() * x, by + y, bz + facing.getModZ() * x);
+				Block block = Objects.requireNonNull(location.getWorld()).getBlockAt(bx + facing.getModX() * x, by + y, bz + facing.getModZ() * x);
 				Material data = mData[x + (y * mSize)];
 				
 				block.setBlockData(data.createBlockData());
 			}
 		}
 	}
-	
-	public void placeAtFlat(Location location, BlockFace facing)
+
+	private static void checkValidFacing(BlockFace facing){
+    Validate.isTrue(facing == BlockFace.NORTH || facing == BlockFace.EAST || facing == BlockFace.SOUTH || facing == BlockFace.WEST);
+  }
+
+	void placeAtFlat(Location location, BlockFace facing)
 	{
-		Validate.isTrue(facing == BlockFace.NORTH || facing == BlockFace.EAST || facing == BlockFace.SOUTH || facing == BlockFace.WEST);
-		
+    checkValidFacing(facing);
 		int bx = location.getBlockX();
 		int by = location.getBlockY();
 		int bz = location.getBlockZ();
@@ -77,7 +81,7 @@ public class Subject
 			for(int y = 0; y < mSize; ++y)
 			{
 				
-				Block block = location.getWorld().getBlockAt(bx + right.getModX() * x + facing.getModX() * y, by, bz + right.getModZ() * x + facing.getModZ() * y);
+				Block block = Objects.requireNonNull(location.getWorld()).getBlockAt(bx + right.getModX() * x + facing.getModX() * y, by, bz + right.getModZ() * x + facing.getModZ() * y);
 				Material data = mData[x + (y * mSize)];
 				
 				block.setBlockData(data.createBlockData());
@@ -87,8 +91,7 @@ public class Subject
 	
 	public boolean matches(Location location, BlockFace facing)
 	{
-		Validate.isTrue(facing == BlockFace.NORTH || facing == BlockFace.EAST || facing == BlockFace.SOUTH || facing == BlockFace.WEST);
-		
+    checkValidFacing(facing);
 		BlockFace right = Util.rotateRight(facing);
 		
 		int bx = location.getBlockX();
@@ -99,7 +102,7 @@ public class Subject
 		{
 			for(int y = 0; y < mSize; ++y)
 			{
-				Block block = location.getWorld().getBlockAt(bx + right.getModX() * x + facing.getModX() * y, by, bz + right.getModZ() * x + facing.getModZ() * y);
+				Block block = Objects.requireNonNull(location.getWorld()).getBlockAt(bx + right.getModX() * x + facing.getModX() * y, by, bz + right.getModZ() * x + facing.getModZ() * y);
 				Material data = mData[x + (y * mSize)];
 				if(block.getType() != data)
 					return false;
@@ -109,11 +112,11 @@ public class Subject
 		return true;
 	}
 	
-	public void save(File file) throws IOException
+	void save(File file) throws IOException
 	{
 		YamlConfiguration config = new YamlConfiguration();
 		config.set("size", mSize);
-		ArrayList<String> mats = new ArrayList<>(mData.length);
+		List<String> mats = new ArrayList<>(mData.length);
 		for (Material data : mData) {
 			mats.add(data.name());
 		}
@@ -122,10 +125,10 @@ public class Subject
 		config.save(file);
 	}
 	
-	public static boolean from(Location location, BlockFace facing, int size, Subject destination)
+	static boolean from(Location location, BlockFace facing, int size, Subject destination)
 	{
-		Validate.isTrue(facing == BlockFace.NORTH || facing == BlockFace.EAST || facing == BlockFace.SOUTH || facing == BlockFace.WEST);
-		
+	  checkValidFacing(facing);
+
 		BlockFace right = Util.rotateRight(facing);
 		
 		int bx = location.getBlockX();
@@ -137,7 +140,7 @@ public class Subject
 		{
 			for(int y = 0; y < size; ++y)
 			{
-				Block block = location.getWorld().getBlockAt(bx + x * right.getModX() + y * facing.getModX(), by, bz + x * right.getModZ() + y * facing.getModZ());
+				Block block = Objects.requireNonNull(location.getWorld()).getBlockAt(bx + x * right.getModX() + y * facing.getModX(), by, bz + x * right.getModZ() + y * facing.getModZ());
 				if(block.isEmpty())
 					return false;
 				
@@ -160,7 +163,7 @@ public class Subject
 		return null;
 	}
 	
-	public static Subject from(File file) throws IOException, InvalidConfigurationException
+	static Subject from(File file) throws IOException, InvalidConfigurationException
 	{
 		YamlConfiguration config = new YamlConfiguration();
 		config.load(file);
@@ -171,14 +174,23 @@ public class Subject
 		List<String> dataStrings = config.getStringList("data");
 		if(dataStrings.size() != data.length)
 			throw new InvalidConfigurationException("Data size is incorrect. " + dataStrings.size() + " != " + (size * size));
-		
 		for(int i = 0; i < data.length; ++i)
 		{
 			String str = dataStrings.get(i);
-			Material mat = Material.valueOf(str);
-			data[i]=mat;
+      Material mat;
+			try {
+			  if(str.contains(":")){
+          String[] out = str.split(":",2);
+          mat = Material.valueOf(out[0]);
+        }else{
+           mat = Material.valueOf(str);
+        }
+        data[i]=mat;
+      }catch (IllegalArgumentException e){
+        Minigames.log(Level.WARNING,e.getMessage());
+        throw new InvalidConfigurationException("Data size is incorrect. File: "+file.getName()+" Data: " + dataStrings.size() + " != " + (size * size));
+      }
 		}
-		
 		return new Subject(size, data, file);
 	}
 }
